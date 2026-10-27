@@ -127,6 +127,7 @@ dd { margin: 0; }
 .chip { font-family: var(--mono); font-size: 12px; padding: 5px 11px; border: 1px solid var(--line); border-radius: 999px; background: none; color: var(--ink); cursor: pointer; }
 .chip:hover { border-color: var(--ink-2); }
 .chip.ai { border-color: var(--ai); color: var(--ai-ink); }
+.chip.concept { text-decoration: none; border-color: var(--trace); color: var(--trace); }
 .note { background: var(--bg); border-radius: 8px; padding: 12px 14px; margin-bottom: 20px; font-size: 15px; }
 .note p { margin: 0; }
 
@@ -180,7 +181,7 @@ footer { margin-top: 36px; font-family: var(--mono); font-size: 11.5px; color: v
     <aside class="panel" id="panel" aria-live="polite"></aside>
   </main>
 
-  <footer>Prototype 0.1 · 12 components · 1 guided tour · Draft content for review</footer>
+  <footer>Prototype 0.2 · 12 components · 1 guided tour · First concept page: <a href="concepts/apis-and-rest.html" style="color:inherit">APIs and REST</a></footer>
 </div>
 
 <script type="application/json" id="content">
@@ -211,7 +212,8 @@ footer { margin-top: 36px; font-family: var(--mono); font-size: 11.5px; color: v
           "Nobody can say who is harmed when the system is wrong.",
           "The pilot audience is chosen for enthusiasm, not for representing real usage."
         ]
-      }
+      },
+      "concepts": []
     },
     {
       "id": "frontend",
@@ -233,7 +235,13 @@ footer { margin-top: 36px; font-family: var(--mono); font-size: 11.5px; color: v
           "Permissions enforced only by hiding buttons.",
           "An AI feature with no loading, failure or “I don’t know” state."
         ]
-      }
+      },
+      "concepts": [
+        {
+          "id": "apis-and-rest",
+          "name": "APIs and REST"
+        }
+      ]
     },
     {
       "id": "backend",
@@ -255,7 +263,13 @@ footer { margin-top: 36px; font-family: var(--mono); font-size: 11.5px; color: v
           "Model output written to the database without a schema check.",
           "One giant endpoint that does everything."
         ]
-      }
+      },
+      "concepts": [
+        {
+          "id": "apis-and-rest",
+          "name": "APIs and REST"
+        }
+      ]
     },
     {
       "id": "auth",
@@ -277,7 +291,8 @@ footer { margin-top: 36px; font-family: var(--mono); font-size: 11.5px; color: v
           "Permissions checked at login but not on each tool call.",
           "Tokens stored in browser storage or printed in logs."
         ]
-      }
+      },
+      "concepts": []
     },
     {
       "id": "database",
@@ -299,7 +314,8 @@ footer { margin-top: 36px; font-family: var(--mono); font-size: 11.5px; color: v
           "Backups that exist but have never been restored.",
           "A schema designed after the demo."
         ]
-      }
+      },
+      "concepts": []
     },
     {
       "id": "logs",
@@ -321,7 +337,8 @@ footer { margin-top: 36px; font-family: var(--mono); font-size: 11.5px; color: v
           "Errors swallowed and replaced with a friendly message.",
           "Token cost first discovered on the monthly invoice."
         ]
-      }
+      },
+      "concepts": []
     },
     {
       "id": "orchestrator",
@@ -343,7 +360,13 @@ footer { margin-top: 36px; font-family: var(--mono); font-size: 11.5px; color: v
           "Agent loops with no step or cost limit.",
           "No point where a person can approve a consequential action."
         ]
-      }
+      },
+      "concepts": [
+        {
+          "id": "apis-and-rest",
+          "name": "APIs and REST"
+        }
+      ]
     },
     {
       "id": "llm",
@@ -365,7 +388,8 @@ footer { margin-top: 36px; font-family: var(--mono); font-size: 11.5px; color: v
           "No pinned model version, so behavior shifts silently.",
           "The largest model chosen before anyone measured whether a smaller one passes."
         ]
-      }
+      },
+      "concepts": []
     },
     {
       "id": "retriever",
@@ -387,7 +411,8 @@ footer { margin-top: 36px; font-family: var(--mono); font-size: 11.5px; color: v
           "No citations back to the source.",
           "Documents indexed once and never refreshed."
         ]
-      }
+      },
+      "concepts": []
     },
     {
       "id": "vector-index",
@@ -409,7 +434,8 @@ footer { margin-top: 36px; font-family: var(--mono); font-size: 11.5px; color: v
           "No way to delete one document’s vectors.",
           "Embeddings from two different models mixed in one index."
         ]
-      }
+      },
+      "concepts": []
     },
     {
       "id": "tool-layer",
@@ -431,7 +457,13 @@ footer { margin-top: 36px; font-family: var(--mono); font-size: 11.5px; color: v
           "Tool descriptions so vague the model guesses.",
           "Tool output passed back unfiltered, so text inside a record can instruct the model."
         ]
-      }
+      },
+      "concepts": [
+        {
+          "id": "apis-and-rest",
+          "name": "APIs and REST"
+        }
+      ]
     },
     {
       "id": "client-systems",
@@ -453,7 +485,8 @@ footer { margin-top: 36px; font-family: var(--mono); font-size: 11.5px; color: v
           "Integration through screen scraping.",
           "Nobody on the client side owns the data."
         ]
-      }
+      },
+      "concepts": []
     }
   ],
   "edges": [
@@ -847,6 +880,7 @@ footer { margin-top: 36px; font-family: var(--mono); font-size: 11.5px; color: v
     }
     h += `<div class="row check"><dt>The check</dt><dd>${esc(c.check)}</dd></div>`;
     h += `<div class="row"><dt class="warn">Red flags</dt><dd><ul class="flags">${c.flags.map(f => `<li>${esc(f)}</li>`).join('')}</ul></dd></div></dl>`;
+    if (n.concepts && n.concepts.length) h += `<div class="related"><p class="eyebrow">Concepts inside</p><div class="chips">${n.concepts.map(k => `<a class="chip concept" href="concepts/${k.id}.html">${esc(k.name)}</a>`).join('')}</div></div>`;
     h += `<div class="related"><p class="eyebrow">Connects to</p><div class="chips">${neighbors(n.id).map(chip).join('')}</div></div>`;
     return h;
   }

@@ -53,6 +53,49 @@ export function parseComponent(file) {
   return { ...data, card, file, errors };
 }
 
+export const CONTEXTS = { 'Web app': 'web', 'AI assistant': 'assistant', 'Agent with MCP': 'mcp' };
+
+export function parseConcept(file) {
+  const errors = [];
+  const { data, body } = frontmatter(read(join('content/concepts', file)));
+  if (!data) return { errors: [`${file}: missing frontmatter`], file };
+  const s = sections(body);
+  const intro = paragraphs(s._intro).filter(p => !p.startsWith('# '));
+  const whatP = intro.find(p => p.startsWith('**What:**'));
+  const text = key => (s[key] ? paragraphs(s[key]).join(' ') : undefined);
+  const card = {
+    what: whatP ? whatP.replace('**What:**', '').trim() : undefined,
+    understand: intro.filter(p => p !== whatP).join(' ') || undefined,
+    use: text('Use when'),
+    skip: text('Skip when'),
+    check: text('The check'),
+    flags: s['Red flags'] ? bullets(s['Red flags']) : []
+  };
+
+  // "## In three systems" holds one "### <Context>" block per context.
+  const contexts = {};
+  let cur = null;
+  for (const line of s['In three systems'] || []) {
+    const h = line.match(/^### (.+)$/);
+    if (h) { cur = CONTEXTS[h[1].trim()] || h[1].trim(); contexts[cur] = []; continue; }
+    if (cur) contexts[cur].push(line);
+  }
+  for (const [k, lines] of Object.entries(contexts)) {
+    const ps = paragraphs(lines.filter(l => !/^\s*\d+\.\s+/.test(l)));
+    const whoP = ps.find(p => p.startsWith('**Who calls:**')) || '';
+    const pathP = ps.find(p => p.startsWith('Path:')) || '';
+    const carriesP = ps.find(p => p.startsWith('Carries:')) || '';
+    contexts[k] = {
+      who: whoP.replace('**Who calls:**', '').trim(),
+      text: ps.filter(p => ![whoP, pathP, carriesP].includes(p)).join(' '),
+      path: pathP.replace('Path:', '').split('→').map(x => x.trim()).filter(Boolean),
+      carries: carriesP.replace('Carries:', '').trim(),
+      steps: lines.filter(l => /^\s*\d+\.\s+/.test(l)).map(l => l.replace(/^\s*\d+\.\s+/, '').trim())
+    };
+  }
+  return { ...data, card, contexts, across: text('Across all three'), file, errors };
+}
+
 export function parseTour(file) {
   const { data, body } = frontmatter(read(join('content/tours', file)));
   const s = sections(body);

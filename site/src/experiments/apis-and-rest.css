@@ -1,0 +1,43 @@
+/* Apply experiment: HTTP request builder */
+.sim { display: grid; gap: 16px; }
+.sim-intro { margin: 0; max-width: 64ch; }
+.sim-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (min-width: 780px) { .sim-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.sim-req, .sim-res { display: grid; gap: 14px; min-width: 0; }
+.field { display: grid; gap: 6px; min-width: 0; }
+.field-row { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 10px; }
+.field label, .flabel { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.sim select, .sim textarea {
+  font-family: var(--mono); font-size: 13px; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; width: 100%; min-width: 0;
+}
+.sim textarea { resize: vertical; line-height: 1.45; }
+.presets { display: flex; flex-wrap: wrap; gap: 6px; }
+.preset { font-family: var(--mono); font-size: 11.5px; padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px; background: none; color: var(--ink); cursor: pointer; }
+.preset:hover { border-color: var(--ink-2); }
+.sim pre { margin: 0; font-family: var(--mono); font-size: 12.5px; line-height: 1.5; background: var(--code-bg); border-radius: 8px; padding: 12px 14px; overflow-x: auto; white-space: pre; }
+.sim-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.sim-note { font-family: var(--mono); font-size: 11px; color: var(--muted); margin: 0; }
+.status { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 600; font-size: 20px; }
+.pill { font-family: var(--mono); font-size: 12.5px; font-weight: 500; padding: 3px 9px; border-radius: 999px; color: var(--bg); font-variant-numeric: tabular-nums; }
+.pill.ok { background: var(--ok); }
+.pill.bad { background: var(--warn); }
+.pill.limit { background: var(--ai); }
+.why { display: grid; gap: 8px; }
+.why p { margin: 0; }
+.ctx-note { font-size: 15.5px; color: var(--ink-2); }
+.ctx-note span { font-family: var(--mono); font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+.server summary { font-family: var(--display); font-weight: 600; font-size: 15px; cursor: pointer; padding: 4px 0; }
+.server[open] summary { margin-bottom: 10px; }
+.sim pre.code { padding: 10px 0; counter-reset: ln; }
+.ln { display: block; padding: 0 14px 0 0; counter-increment: ln; }
+.ln::before { content: counter(ln); display: inline-block; width: 2.6em; padding-right: 1em; text-align: right; color: var(--muted); opacity: .6; }
+.ln.hl { background: var(--hl); }
+.tok-s { color: var(--ai-ink); }
+.tok-c { color: var(--muted); font-style: italic; }
+.tok-d { color: var(--trace); }
+.tok-k { color: var(--ink); font-weight: 600; }
+.code-note { margin: 10px 0 0; font-size: 15px; color: var(--ink-2); }
+.burst { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-family: var(--mono); font-size: 12.5px; }
+.burst li { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.burst li span:first-child { min-width: 9.5em; color: var(--muted); }

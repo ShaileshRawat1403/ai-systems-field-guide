@@ -16,8 +16,9 @@ It's written for practitioners, so every concept connects back to something you 
 |---|---|
 | **Architecture explorer** | A tappable diagram of an AI-integrated system. Toggle between plain software and the version with AI to see exactly what AI adds. Open [`site/public/index.html`](site/public/index.html) in a browser. |
 | **Component cards** | Twelve components, each with what it is, when to use it, when to skip it, one hands-on check and the red flags that show up in real projects. See [`content/components`](content/components). |
+| **Concept pages** | Each concept explained once, then shown working in three systems at one fictional company: a web app, an AI assistant and an agent using MCP. Every page has three views: Understand, Visualize and Apply. The first is [APIs and REST](content/concepts/apis-and-rest.md), with an HTTP simulator you can break on purpose. |
 | **Guided tours** | One request followed step by step across the diagram, with what can go wrong at each step. Start with [Follow a question](content/tours/leave-question.md). |
-| **The stack map** | Eighteen layers of the current stack, from interface to adoption, with tools, cloud equivalents and trade-offs. In progress, see [`content/README.md`](content/README.md). |
+| **The stack map** | Nineteen layers of the current stack, from interface to adoption, with tools, cloud equivalents and trade-offs. In progress, see [`content/README.md`](content/README.md). |
 
 ## How it's organized
 
@@ -35,16 +36,18 @@ Content lives as plain Markdown and YAML, and the site is generated from those s
 ```
 content/
   components/     one Markdown card per component on the diagram
+  concepts/       one page per concept, with its three systems and its views
   tours/          guided tours, readable top to bottom
 data/
   diagram.json    positions and connections for the explorer
-  layers.json     the eighteen layers of the stack map
+  layers.json     the nineteen layers of the stack map
   stack/          tool landscapes per layer, each entry dated and sourced
-templates/        copy these to add a component or a stack layer
+docs/design.md    the decisions behind the guide and the full concept inventory
+templates/        copy these to add a component, a concept or a stack layer
 scripts/          validate.mjs checks every file's shape, build.mjs builds the site
 site/
-  src/            page template
-  public/         the built explorer
+  src/            page templates and Apply experiments
+  public/         the built site
 ```
 
 Tool lists go stale fast, so every tool entry records the month it was last verified and the source it was checked against. The validator warns when an entry is more than six months old.
@@ -55,14 +58,14 @@ You need Node 20 or later.
 
 ```bash
 npm install
-npm run check    # validate the content, then rebuild site/public/index.html
+npm run check    # validate the content, then rebuild everything in site/public
 ```
 
 Then open `site/public/index.html` in a browser. There's no server and no framework yet.
 
 ## Status
 
-Prototype 0.1. The explorer, twelve component cards and one tour are in place. The stack map is being filled in one trunk at a time, starting with how AI changes the system.
+Prototype 0.2. The explorer, twelve component cards, one tour and the first concept page are in place. The full concept inventory and build order are in [docs/design.md](docs/design.md). The stack map is being filled in one trunk at a time, starting with how AI changes the system.
 
 ## Contributing
 

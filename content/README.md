@@ -1,6 +1,6 @@
 # The stack map
 
-Eighteen layers, grouped under the guide's four questions. Each layer will get a page covering what it does, the concepts inside it, the current tool landscape with AWS, Azure and GCP equivalents, neutral trade-offs and red flags. Components already on the explorer diagram are linked.
+Nineteen layers, grouped under the guide's four questions. Each layer will get a page covering what it does, the concepts inside it, the current tool landscape with AWS, Azure and GCP equivalents, neutral trade-offs and red flags. Components already on the explorer diagram are linked.
 
 **Status key:** planned · in progress · published
 
@@ -10,6 +10,7 @@ Eighteen layers, grouped under the guide's four questions. Each layer will get a
 |---|---|---|
 | Interface | [User](components/user.md), [Frontend](components/frontend.md) | planned |
 | Application and APIs | [Backend](components/backend.md) | planned |
+| Data and contracts | | planned |
 | Identity and access | [Auth](components/auth.md) | planned |
 | Operational data | [Database](components/database.md) | planned |
 | Storage and caching | | planned |

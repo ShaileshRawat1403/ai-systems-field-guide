@@ -1,6 +1,6 @@
 // Checks that every content and data file keeps its shape.
 // Errors fail the run. Stale tool entries are warnings unless --strict is passed.
-import { readJSON, list, parseComponent, parseTour, loadStack, fileId } from './lib.mjs';
+import { readJSON, list, parseComponent, parseConcept, parseTour, loadStack, fileId, CONTEXTS } from './lib.mjs';
 
 const strict = process.argv.includes('--strict');
 const STALE_MONTHS = 6;
@@ -39,6 +39,40 @@ for (const c of components) {
   if (!!card.use !== !!card.skip) err(`${where}: "Use when" and "Skip when" come as a pair`);
 }
 for (const id of nodeIds) if (!componentIds.has(id)) err(`data/diagram.json: node "${id}" has no file in content/components`);
+
+// Concepts
+const conceptFiles = list('content/concepts', '.md');
+for (const f of conceptFiles) {
+  const c = parseConcept(f);
+  const where = `content/concepts/${f}`;
+  (c.errors || []).forEach(err);
+  if (c.id !== fileId(f)) err(`${where}: id "${c.id}" must match the file name`);
+  for (const k of ['name', 'layer', 'phase']) if (c[k] === undefined) err(`${where}: missing "${k}" in frontmatter`);
+  if (c.layer && !layerIds.has(c.layer)) err(`${where}: unknown layer "${c.layer}"`);
+  if (c.phase !== undefined && ![1, 2, 3, 4, 5].includes(c.phase)) err(`${where}: "phase" must be 1 to 5`);
+  (c.components || []).forEach(id => { if (!nodeIds.has(id)) err(`${where}: unknown component "${id}"`); });
+  if (c.apply && !['simulator', 'example', 'trace'].includes(c.apply)) err(`${where}: "apply" must be simulator, example or trace`);
+  const card = c.card || {};
+  if (!card.what) err(`${where}: needs a "**What:**" line`);
+  if (!card.understand) err(`${where}: needs a paragraph after the What line`);
+  if (!card.check) err(`${where}: needs a "## The check" section`);
+  if (!card.flags || card.flags.length === 0) err(`${where}: needs at least one bullet under "## Red flags"`);
+  if (!!card.use !== !!card.skip) err(`${where}: "Use when" and "Skip when" come as a pair`);
+  const ctxKeys = Object.keys(c.contexts || {});
+  if (ctxKeys.length) {
+    for (const k of ['web', 'assistant', 'mcp']) {
+      const x = c.contexts[k];
+      if (!x) { err(`${where}: "In three systems" needs a "### ${Object.keys(CONTEXTS).find(n => CONTEXTS[n] === k)}" block`); continue; }
+      if (!x.who) err(`${where} › ${k}: needs a "**Who calls:**" line`);
+      if (!x.text) err(`${where} › ${k}: needs an explanation`);
+      if (x.path.length < 2) err(`${where} › ${k}: needs a "Path:" line with at least two stops`);
+      if (!x.carries) err(`${where} › ${k}: needs a "Carries:" line`);
+      if (!x.steps.length) err(`${where} › ${k}: needs numbered steps`);
+    }
+    ctxKeys.filter(k => !['web', 'assistant', 'mcp'].includes(k)).forEach(k => err(`${where}: unknown context "${k}"`));
+    if (!c.across) err(`${where}: needs an "## Across all three" section`);
+  }
+}
 
 // Diagram edges
 const edgeKey = (a, b) => [a, b].sort().join('|');
@@ -99,5 +133,5 @@ for (const s of loadStack()) {
 warnings.forEach(w => console.warn('warn  ' + w));
 errors.forEach(e => console.error('error ' + e));
 const failed = errors.length > 0 || (strict && warnings.length > 0);
-console.log(`\n${components.length} components, ${list('content/tours', '.md').length} tours, ${loadStack().length} stack files. ${errors.length} errors, ${warnings.length} warnings.`);
+console.log(`\n${components.length} components, ${conceptFiles.length} concepts, ${list('content/tours', '.md').length} tours, ${loadStack().length} stack files. ${errors.length} errors, ${warnings.length} warnings.`);
 process.exit(failed ? 1 : 0);
