@@ -1,0 +1,30 @@
+# Copy to data/stack/<layer-id>.yaml. The file name must match a layer id in data/layers.json.
+# Tool lists go stale fast, so every option carries the month it was last verified and the source used.
+# Options are listed alphabetically. Order never implies a ranking.
+
+layer: context-and-retrieval
+
+categories:
+  - id: vector-search
+    name: Vector search
+    what: Stores embeddings and returns the nearest matches to a query.
+
+    options:
+      - name: Example Database
+        kind: open-source          # open-source | commercial | cloud-service | standard
+        url: https://example.com
+        good_for: The situation where this option fits well.
+        watch_for: The limit or cost that shows up later.
+        verified: 2026-10          # year-month you last checked it against the source
+        source: https://example.com/docs
+
+    # Managed equivalents on each cloud. Use [] where a cloud has nothing native.
+    clouds:
+      aws: [Service name]
+      azure: [Service name]
+      gcp: [Service name]
+    cloud_notes: Where the clouds differ in a way that changes a design decision.
+
+    # Neutral insights. State the trade-off and the condition that tips it, without naming a winner.
+    tradeoffs:
+      - A separate vector store starts to pay off when <condition>; below that, <alternative> is simpler to operate.

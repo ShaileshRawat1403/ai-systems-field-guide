@@ -1,0 +1,159 @@
+{
+  "grid": {
+    "cols": {
+      "L": 60,
+      "C": 180,
+      "R": 300
+    },
+    "rows": [
+      16,
+      92,
+      176,
+      268,
+      360,
+      452
+    ],
+    "node": {
+      "w": 100,
+      "h": 46
+    }
+  },
+  "nodes": [
+    {
+      "id": "user",
+      "col": "C",
+      "row": 0
+    },
+    {
+      "id": "frontend",
+      "col": "C",
+      "row": 1
+    },
+    {
+      "id": "backend",
+      "col": "C",
+      "row": 2
+    },
+    {
+      "id": "auth",
+      "col": "L",
+      "row": 2
+    },
+    {
+      "id": "database",
+      "col": "L",
+      "row": 3
+    },
+    {
+      "id": "logs",
+      "col": "R",
+      "row": 2
+    },
+    {
+      "id": "orchestrator",
+      "col": "C",
+      "row": 3
+    },
+    {
+      "id": "llm",
+      "col": "L",
+      "row": 4
+    },
+    {
+      "id": "retriever",
+      "col": "C",
+      "row": 4
+    },
+    {
+      "id": "vector-index",
+      "col": "C",
+      "row": 5
+    },
+    {
+      "id": "tool-layer",
+      "col": "R",
+      "row": 4
+    },
+    {
+      "id": "client-systems",
+      "col": "R",
+      "row": 5
+    }
+  ],
+  "edges": [
+    {
+      "id": "user-frontend",
+      "from": "user",
+      "to": "frontend",
+      "mode": "both"
+    },
+    {
+      "id": "frontend-backend",
+      "from": "frontend",
+      "to": "backend",
+      "mode": "both"
+    },
+    {
+      "id": "backend-auth",
+      "from": "backend",
+      "to": "auth",
+      "mode": "both"
+    },
+    {
+      "id": "backend-logs",
+      "from": "backend",
+      "to": "logs",
+      "mode": "both"
+    },
+    {
+      "id": "backend-database",
+      "from": "backend",
+      "to": "database",
+      "mode": "both"
+    },
+    {
+      "id": "backend-client",
+      "from": "backend",
+      "to": "client-systems",
+      "mode": "trad",
+      "d": "M 222 222 C 330 252, 352 400, 318 452"
+    },
+    {
+      "id": "backend-orchestrator",
+      "from": "backend",
+      "to": "orchestrator",
+      "mode": "ai"
+    },
+    {
+      "id": "orchestrator-llm",
+      "from": "orchestrator",
+      "to": "llm",
+      "mode": "ai"
+    },
+    {
+      "id": "orchestrator-retriever",
+      "from": "orchestrator",
+      "to": "retriever",
+      "mode": "ai"
+    },
+    {
+      "id": "retriever-vector",
+      "from": "retriever",
+      "to": "vector-index",
+      "mode": "ai"
+    },
+    {
+      "id": "orchestrator-tools",
+      "from": "orchestrator",
+      "to": "tool-layer",
+      "mode": "ai"
+    },
+    {
+      "id": "tools-client",
+      "from": "tool-layer",
+      "to": "client-systems",
+      "mode": "ai"
+    }
+  ],
+  "layerNote": "Seven components, and the backend calls client systems directly. Most web and mobile apps look like this. Switch to With AI and five components appear in between. Nothing on this screen goes away."
+}

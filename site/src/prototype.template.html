@@ -1,0 +1,427 @@
+<title>AI Systems Field Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Schibsted+Grotesk:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Layout: portrait system schematic on the left as navigation, field-guide card on the right; stacks on phones. */
+:root {
+  --bg: #ECEFEA;
+  --surface: #F8F9F6;
+  --ink: #17201D;
+  --ink-2: #36423D;
+  --muted: #5E6A64;
+  --line: #CDD3CD;
+  --edge: #9AA59F;
+  --ai: #B8730F;
+  --ai-ink: #8C5306;
+  --ai-fill: #F5E6CC;
+  --trace: #2350C8;
+  --on-trace: #FFFFFF;
+  --warn: #A63A2A;
+  --display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --body: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111715; --surface: #19211E; --ink: #E5EAE6; --ink-2: #C3CCC7; --muted: #97A39D;
+    --line: #2F3A36; --edge: #5A6762; --ai: #D9963E; --ai-ink: #EDB765; --ai-fill: #33260F;
+    --trace: #86A2FF; --on-trace: #0B1330; --warn: #EE8573; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111715; --surface: #19211E; --ink: #E5EAE6; --ink-2: #C3CCC7; --muted: #97A39D;
+  --line: #2F3A36; --edge: #5A6762; --ai: #D9963E; --ai-ink: #EDB765; --ai-fill: #33260F;
+  --trace: #86A2FF; --on-trace: #0B1330; --warn: #EE8573; color-scheme: dark;
+}
+
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.55; }
+.wrap {
+  max-width: 1120px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 40px;
+}
+.eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0; }
+h1 { font-family: var(--display); font-weight: 700; font-size: clamp(30px, 5vw, 46px); line-height: 1.04; letter-spacing: -.015em; margin: .28em 0 .32em; text-wrap: balance; }
+.lede { max-width: 62ch; color: var(--ink-2); margin: 0; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 14px 20px; align-items: center; margin-top: 22px; }
+.tabs { display: inline-flex; gap: 22px; border-bottom: 1px solid var(--line); }
+.tabs button {
+  font-family: var(--display); font-weight: 600; font-size: 15.5px; padding: 10px 0; margin-bottom: -1px;
+  border: 0; border-bottom: 2px solid transparent; background: none; color: var(--muted); cursor: pointer;
+}
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--surface); }
+.seg button { font-family: var(--mono); font-size: 12px; padding: 6px 12px; border: 0; border-radius: 999px; background: none; color: var(--muted); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.is-tour #layerSeg { display: none; }
+button:focus-visible, .chip:focus-visible { outline: 2px solid var(--trace); outline-offset: 2px; }
+
+.grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; margin-top: 26px; }
+@media (min-width: 880px) {
+  .grid { grid-template-columns: minmax(320px, 440px) minmax(0, 1fr); align-items: start; }
+  .panel { position: sticky; top: calc(16px + env(safe-area-inset-top, 0px)); }
+}
+.stage { min-width: 0; }
+.stage-note { font-family: var(--mono); font-size: 12px; color: var(--muted); margin: 0 0 10px; }
+.stage svg { display: block; width: 100%; height: auto; max-height: 80vh; margin: 0 auto; }
+@media (max-width: 879px) { .is-tour .stage svg { max-height: 54vh; } }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 12px; font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.sw { display: inline-block; width: 11px; height: 11px; border-radius: 3px; }
+.sw-sw { background: var(--surface); border: 1.5px solid var(--ink-2); }
+.sw-ai { background: var(--ai-fill); border: 1.5px solid var(--ai); }
+.sw-tr { background: var(--trace); border-radius: 50%; }
+.legend-trace { display: none !important; }
+.is-tour .legend-trace { display: inline-flex !important; }
+
+/* Diagram */
+.edge { fill: none; stroke: var(--edge); stroke-width: 1.5; transition: opacity .25s, stroke .25s, stroke-width .25s; }
+.edge.ghost { stroke-dasharray: 3 4; opacity: .45; }
+.edge.off { display: none; }
+.edge.hot { stroke: var(--ink); stroke-width: 2.2; }
+.is-tour .edge.hot { stroke: var(--trace); stroke-width: 2.8; }
+.edge.dim { opacity: .22; }
+.edge-label { font-family: var(--mono); font-size: 8.5px; fill: var(--muted); }
+.node { cursor: pointer; outline: none; transition: opacity .25s; }
+.node rect { fill: var(--surface); stroke: var(--ink-2); stroke-width: 1.2; transition: stroke .2s, stroke-width .2s; }
+.node.ai rect { fill: var(--ai-fill); stroke: var(--ai); }
+.node .kind { font-family: var(--mono); font-size: 7.6px; letter-spacing: .09em; fill: var(--muted); text-anchor: middle; }
+.node.ai .kind { fill: var(--ai-ink); }
+.node .name { font-family: var(--display); font-weight: 600; font-size: 12.5px; fill: var(--ink); text-anchor: middle; }
+.node:hover rect { stroke-width: 2; }
+.node:focus-visible rect { stroke: var(--trace); stroke-width: 2.6; }
+.node.sel rect { stroke: var(--ink); stroke-width: 2.6; }
+.node.ghost { opacity: .38; }
+.node.ghost rect { fill: none; stroke-dasharray: 3 3; }
+.is-tour .node.dim { opacity: .28; }
+.is-tour .node.on rect { stroke: var(--trace); stroke-width: 2.6; }
+.pulse { fill: var(--trace); }
+.pulse-halo { fill: var(--trace); opacity: .22; }
+
+/* Panel */
+.panel { min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px 22px 24px; }
+@media (max-width: 879px) { .panel { padding: 18px 16px 20px; scroll-margin-top: 12px; } }
+.panel h2 { font-family: var(--display); font-weight: 700; font-size: 27px; line-height: 1.12; letter-spacing: -.01em; margin: .28em 0 .38em; text-wrap: balance; }
+.ai-tag { color: var(--ai-ink); }
+.what { font-size: 18.5px; line-height: 1.45; margin: 0 0 .7em; max-width: 60ch; }
+.understand { color: var(--ink-2); margin: 0; max-width: 64ch; }
+dl { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; margin: 22px 0 0; }
+@media (min-width: 1000px), (min-width: 600px) and (max-width: 879px) {
+  dl { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 22px; }
+  .row { grid-column: 1 / -1; }
+  .row.half { grid-column: auto; }
+}
+dt { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 5px; }
+dd { margin: 0; }
+.warn { color: var(--warn); }
+.row.check dd { background: var(--bg); border-radius: 6px; padding: 11px 13px; }
+.flags { margin: 0; padding-left: 1.1em; }
+.flags li + li { margin-top: 5px; }
+.flags li::marker { color: var(--warn); }
+.related { margin-top: 22px; }
+.chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 8px; }
+.chip { font-family: var(--mono); font-size: 12px; padding: 5px 11px; border: 1px solid var(--line); border-radius: 999px; background: none; color: var(--ink); cursor: pointer; }
+.chip:hover { border-color: var(--ink-2); }
+.chip.ai { border-color: var(--ai); color: var(--ai-ink); }
+.note { background: var(--bg); border-radius: 8px; padding: 12px 14px; margin-bottom: 20px; font-size: 15px; }
+.note p { margin: 0; }
+
+.scenario { margin: 4px 0 0; font-style: italic; color: var(--ink-2); }
+.progress { display: flex; gap: 3px; margin: 18px 0 8px; }
+.progress span { flex: 1; height: 3px; border-radius: 2px; background: var(--line); }
+.progress .done { background: var(--trace); opacity: .45; }
+.progress .now { background: var(--trace); }
+.count { font-family: var(--mono); font-size: 12px; color: var(--muted); margin: 0; font-variant-numeric: tabular-nums; }
+.narr { font-size: 17.5px; line-height: 1.5; margin: 0; max-width: 62ch; }
+.fail { margin-top: 18px; padding-top: 14px; border-top: 1px dashed var(--line); }
+.fail p:last-child { margin: 5px 0 0; max-width: 62ch; }
+.nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+.btn { font-family: var(--display); font-weight: 600; font-size: 15px; padding: 10px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.btn:disabled { opacity: .4; cursor: default; }
+.btn.primary { margin-left: auto; background: var(--trace); border-color: var(--trace); color: var(--on-trace); }
+.kbd { font-family: var(--mono); font-size: 11px; color: var(--muted); margin: 12px 0 0; }
+@media (hover: none) { .kbd { display: none; } }
+
+footer { margin-top: 36px; font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Field guide · Prototype 0.1</p>
+    <h1>AI Systems Field Guide</h1>
+    <p class="lede">Every AI feature runs inside an ordinary software system. Tap a component to see what it does and how it fails in production, or follow one question through all twelve.</p>
+    <div class="controls">
+      <div class="tabs" role="tablist" aria-label="View">
+        <button id="tab-explore" role="tab" aria-selected="true">Explore</button>
+        <button id="tab-tour" role="tab" aria-selected="false">Follow a question</button>
+      </div>
+      <div class="seg" id="layerSeg" role="group" aria-label="Layers shown">
+        <button id="layer-trad" aria-pressed="false">Software only</button>
+        <button id="layer-ai" aria-pressed="true">With AI</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="grid">
+    <section class="stage" aria-label="Architecture">
+      <p class="stage-note" id="stageNote"></p>
+      <svg id="map" viewBox="0 0 360 518" role="group" aria-label="Architecture of an AI-integrated system"></svg>
+      <div class="legend">
+        <span><i class="sw sw-sw"></i>Software</span>
+        <span><i class="sw sw-ai"></i>Added by AI</span>
+        <span class="legend-trace"><i class="sw sw-tr"></i>Active in this step</span>
+      </div>
+    </section>
+    <aside class="panel" id="panel" aria-live="polite"></aside>
+  </main>
+
+  <footer>Prototype 0.1 · 12 components · 1 guided tour · Draft content for review</footer>
+</div>
+
+<script type="application/json" id="content">
+__CONTENT_JSON__
+</script>
+
+<script>
+(() => {
+  const C = JSON.parse(document.getElementById('content').textContent);
+  const COLS = { L: 60, C: 180, R: 300 };
+  const ROWS = [16, 92, 176, 268, 360, 452];
+  const W = 100, H = 46;
+  const NS = 'http://www.w3.org/2000/svg';
+  const byId = Object.fromEntries(C.nodes.map(n => [n.id, n]));
+  const tour = C.tours[0];
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const svg = document.getElementById('map');
+  const panel = document.getElementById('panel');
+  const stageNote = document.getElementById('stageNote');
+  const state = { mode: 'explore', layer: 'ai', sel: 'orchestrator', step: 0 };
+
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  function box(id) {
+    const n = byId[id], cx = COLS[n.col], y = ROWS[n.row];
+    return { x: cx - W / 2, y, w: W, h: H, cx, cy: y + H / 2 };
+  }
+  function edgeD(a, b) {
+    const A = box(a), B = box(b);
+    if (Math.abs(A.cy - B.cy) < 4) {
+      const x1 = A.cx < B.cx ? A.x + A.w : A.x;
+      const x2 = A.cx < B.cx ? B.x : B.x + B.w;
+      return `M ${x1} ${A.cy} L ${x2} ${B.cy}`;
+    }
+    const down = A.cy < B.cy;
+    const y1 = down ? A.y + A.h : A.y, y2 = down ? B.y : B.y + B.h, m = (y1 + y2) / 2;
+    return `M ${A.cx} ${y1} C ${A.cx} ${m}, ${B.cx} ${m}, ${B.cx} ${y2}`;
+  }
+  function make(tag, attrs, parent) {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+
+  // Build diagram
+  const gE = make('g', {}, svg), gN = make('g', {}, svg), gP = make('g', {}, svg);
+  const edgeEls = {};
+  C.edges.forEach(e => { edgeEls[e.id] = make('path', { d: e.d || edgeD(e.from, e.to), class: 'edge' }, gE); });
+  const tradLabel = make('text', { x: 352, y: 300, class: 'edge-label', 'text-anchor': 'end' }, gE);
+  tradLabel.textContent = 'direct API call';
+
+  const nodeEls = {};
+  C.nodes.forEach(n => {
+    const b = box(n.id);
+    const g = make('g', { class: 'node' + (n.ai ? ' ai' : ''), tabindex: '0', role: 'button', 'aria-label': n.name + (n.ai ? ', added by AI' : '') }, gN);
+    make('rect', { x: b.x, y: b.y, width: b.w, height: b.h, rx: n.id === 'user' ? 23 : 7 }, g);
+    make('text', { x: b.cx, y: b.y + 18, class: 'kind' }, g).textContent = n.kind;
+    make('text', { x: b.cx, y: b.y + 34, class: 'name' }, g).textContent = n.name;
+    g.addEventListener('click', () => pick(n.id));
+    g.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); pick(n.id); } });
+    nodeEls[n.id] = g;
+  });
+  const halo = make('circle', { r: 9, cx: -20, cy: -20, class: 'pulse-halo' }, gP);
+  const dot = make('circle', { r: 4.5, cx: -20, cy: -20, class: 'pulse' }, gP);
+
+  // Graph helpers
+  const isOff = (e, layer) => e.mode === 'trad' && layer !== 'trad';
+  const isGhost = (e, layer) => e.mode === 'ai' && layer === 'trad';
+  function neighbors(id) {
+    return C.edges.filter(e => !isOff(e, state.layer) && !isGhost(e, state.layer) && (e.from === id || e.to === id))
+      .map(e => (e.from === id ? e.to : e.from));
+  }
+  function findEdge(a, b) {
+    const e = C.edges.find(x => (x.from === a && x.to === b) || (x.from === b && x.to === a));
+    return e ? { e, rev: e.from !== a } : null;
+  }
+
+  // Pulse animation
+  let raf = 0, token = 0, pulseKey = null;
+  function hidePulse() { dot.style.visibility = 'hidden'; halo.style.visibility = 'hidden'; }
+  function stopPulse() { token++; cancelAnimationFrame(raf); hidePulse(); }
+  function runPulse(step) {
+    stopPulse();
+    if (reduce) return;
+    const my = token;
+    const segs = step.edges.map(([a, b]) => findEdge(a, b)).filter(Boolean).map(f => ({ p: edgeEls[f.e.id], rev: f.rev }));
+    if (!segs.length) return;
+    let i = 0, start = null;
+    const dur = 760;
+    dot.style.visibility = 'visible'; halo.style.visibility = 'visible';
+    const tick = t => {
+      if (my !== token) return;
+      if (start === null) start = t;
+      const s = segs[i], len = s.p.getTotalLength();
+      const k = Math.min(1, (t - start) / dur);
+      const e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+      const pt = s.p.getPointAtLength((s.rev ? 1 - e : e) * len);
+      dot.setAttribute('cx', pt.x); dot.setAttribute('cy', pt.y);
+      halo.setAttribute('cx', pt.x); halo.setAttribute('cy', pt.y);
+      if (k >= 1) {
+        i++; start = null;
+        if (i >= segs.length) { setTimeout(() => { if (my === token) hidePulse(); }, 280); return; }
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+  }
+
+  // Panels
+  function chip(id) {
+    const n = byId[id];
+    return `<button class="chip${n.ai ? ' ai' : ''}" data-go="${id}">${esc(n.name)}</button>`;
+  }
+  function cardPanel() {
+    const n = byId[state.sel], c = n.card;
+    let h = '';
+    if (state.layer === 'trad') h += `<div class="note"><p><strong>Software only.</strong> ${esc(C.layerNote)}</p></div>`;
+    h += `<p class="eyebrow">${n.ai ? '<span class="ai-tag">Added by AI</span>' : 'Software'} · Trunk ${n.trunk}: ${esc(C.trunks[n.trunk])}</p>`;
+    h += `<h2>${esc(n.name)}</h2><p class="what">${esc(c.what)}</p><p class="understand">${esc(c.understand)}</p><dl>`;
+    if (c.use) {
+      h += `<div class="row half"><dt>Use when</dt><dd>${esc(c.use)}</dd></div>`;
+      h += `<div class="row half"><dt>Skip when</dt><dd>${esc(c.skip)}</dd></div>`;
+    }
+    h += `<div class="row check"><dt>The check</dt><dd>${esc(c.check)}</dd></div>`;
+    h += `<div class="row"><dt class="warn">Red flags</dt><dd><ul class="flags">${c.flags.map(f => `<li>${esc(f)}</li>`).join('')}</ul></dd></div></dl>`;
+    h += `<div class="related"><p class="eyebrow">Connects to</p><div class="chips">${neighbors(n.id).map(chip).join('')}</div></div>`;
+    return h;
+  }
+  function tourPanel(s) {
+    const i = state.step, N = tour.steps.length, last = i === N - 1;
+    const bars = tour.steps.map((_, j) => `<span class="${j < i ? 'done' : j === i ? 'now' : ''}"></span>`).join('');
+    return `<p class="eyebrow">Scenario</p><p class="scenario">${esc(tour.scenario)}</p>
+      <div class="progress" aria-hidden="true">${bars}</div>
+      <p class="count">Step ${i + 1} of ${N}</p>
+      <h2>${esc(s.title)}</h2><p class="narr">${esc(s.text)}</p>
+      <div class="fail"><p class="eyebrow warn">What can go wrong</p><p>${esc(s.fail)}</p></div>
+      <div class="related"><p class="eyebrow">Components in this step</p><div class="chips">${s.nodes.map(chip).join('')}</div></div>
+      <div class="nav">
+        <button class="btn" data-act="prev"${i === 0 ? ' disabled' : ''}>Back</button>
+        <button class="btn" data-act="replay">Replay</button>
+        <button class="btn primary" data-act="${last ? 'restart' : 'next'}">${last ? 'Start again' : 'Next step'}</button>
+      </div>
+      <p class="kbd">Left and right arrow keys move between steps.</p>`;
+  }
+
+  // Render
+  function render() {
+    const tourOn = state.mode === 'tour';
+    const layer = tourOn ? 'ai' : state.layer;
+    const step = tourOn ? tour.steps[state.step] : null;
+    document.body.classList.toggle('is-tour', tourOn);
+    const near = tourOn ? [] : neighbors(state.sel);
+    const active = new Set();
+    if (step) step.edges.forEach(([a, b]) => { const f = findEdge(a, b); if (f) active.add(f.e.id); });
+
+    C.nodes.forEach(n => {
+      const g = nodeEls[n.id];
+      g.classList.toggle('ghost', !tourOn && layer === 'trad' && n.ai);
+      g.classList.toggle('sel', !tourOn && state.sel === n.id);
+      g.classList.toggle('on', !!step && step.nodes.includes(n.id));
+      g.classList.toggle('dim', !!step && !step.nodes.includes(n.id));
+      g.setAttribute('aria-pressed', String(!tourOn && state.sel === n.id));
+    });
+    C.edges.forEach(e => {
+      const p = edgeEls[e.id], off = isOff(e, layer), ghost = isGhost(e, layer);
+      p.classList.toggle('off', off);
+      p.classList.toggle('ghost', ghost);
+      p.classList.toggle('hot', tourOn ? active.has(e.id) : (!off && !ghost && (e.from === state.sel || e.to === state.sel)));
+      p.classList.toggle('dim', tourOn && !active.has(e.id));
+    });
+    tradLabel.style.display = layer === 'trad' ? '' : 'none';
+
+    document.getElementById('tab-explore').setAttribute('aria-selected', String(!tourOn));
+    document.getElementById('tab-tour').setAttribute('aria-selected', String(tourOn));
+    document.getElementById('layer-trad').setAttribute('aria-pressed', String(state.layer === 'trad'));
+    document.getElementById('layer-ai').setAttribute('aria-pressed', String(state.layer === 'ai'));
+
+    stageNote.textContent = tourOn
+      ? `Following one request · step ${state.step + 1} of ${tour.steps.length}`
+      : layer === 'ai'
+        ? '12 components. The 5 in amber are what AI adds. Tap any of them.'
+        : '7 components. The shape of most web and mobile apps.';
+
+    panel.innerHTML = tourOn ? tourPanel(step) : cardPanel();
+
+    const key = tourOn ? 'step-' + state.step : null;
+    if (key !== pulseKey) { pulseKey = key; if (key) runPulse(step); else stopPulse(); }
+  }
+
+  // Navigation
+  function setHash(v) { if (location.hash !== '#' + v) location.hash = v; }
+  function maybeScrollPanel() {
+    if (window.innerWidth >= 880) return;
+    const r = panel.getBoundingClientRect();
+    if (r.top > window.innerHeight * 0.7) panel.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+  }
+  function pick(id) {
+    state.mode = 'explore';
+    if (state.layer === 'trad' && byId[id].ai) state.layer = 'ai';
+    state.sel = id;
+    setHash(id);
+    render();
+    maybeScrollPanel();
+  }
+  function route() {
+    const h = decodeURIComponent(location.hash.slice(1));
+    if (h === 'tour') state.mode = 'tour';
+    else if (byId[h]) {
+      if (state.sel !== h) { state.sel = h; if (byId[h].ai) state.layer = 'ai'; }
+      state.mode = 'explore';
+    } else state.mode = 'explore';
+    render();
+  }
+
+  document.getElementById('tab-explore').addEventListener('click', () => { state.mode = 'explore'; setHash(state.sel); render(); });
+  document.getElementById('tab-tour').addEventListener('click', () => { state.mode = 'tour'; setHash('tour'); render(); });
+  document.getElementById('layer-ai').addEventListener('click', () => { state.layer = 'ai'; render(); });
+  document.getElementById('layer-trad').addEventListener('click', () => {
+    state.layer = 'trad';
+    if (byId[state.sel].ai) { state.sel = 'backend'; setHash('backend'); }
+    render();
+  });
+  panel.addEventListener('click', ev => {
+    const go = ev.target.closest('[data-go]');
+    if (go) { pick(go.dataset.go); return; }
+    const act = ev.target.closest('[data-act]');
+    if (!act) return;
+    const a = act.dataset.act;
+    if (a === 'replay') { runPulse(tour.steps[state.step]); return; }
+    if (a === 'next') state.step = Math.min(state.step + 1, tour.steps.length - 1);
+    if (a === 'prev') state.step = Math.max(state.step - 1, 0);
+    if (a === 'restart') state.step = 0;
+    render();
+  });
+  document.addEventListener('keydown', ev => {
+    if (state.mode !== 'tour' || ev.altKey || ev.metaKey || ev.ctrlKey) return;
+    if (ev.key === 'ArrowRight' && state.step < tour.steps.length - 1) { state.step++; render(); }
+    if (ev.key === 'ArrowLeft' && state.step > 0) { state.step--; render(); }
+  });
+  window.addEventListener('hashchange', route);
+  route();
+})();
+</script>
