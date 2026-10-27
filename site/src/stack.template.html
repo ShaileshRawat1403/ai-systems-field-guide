@@ -1,0 +1,194 @@
+<title>AI Stack Map</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Schibsted+Grotesk:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Layout: a field catalog. Layers run down the page; inside each, categories hold option cards, then the cloud equivalents and the trade-offs. */
+:root {
+  --bg: #ECEFEA;
+  --surface: #F8F9F6;
+  --ink: #17201D;
+  --ink-2: #36423D;
+  --muted: #5E6A64;
+  --line: #CDD3CD;
+  --ai: #B8730F;
+  --ai-ink: #8C5306;
+  --ai-fill: #F5E6CC;
+  --trace: #2350C8;
+  --warn: #A63A2A;
+  --ok: #2E7A4C;
+  --display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --body: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111715; --surface: #19211E; --ink: #E5EAE6; --ink-2: #C3CCC7; --muted: #97A39D; --line: #2F3A36;
+    --ai: #D9963E; --ai-ink: #EDB765; --ai-fill: #33260F; --trace: #86A2FF; --warn: #EE8573; --ok: #6CCB92; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111715; --surface: #19211E; --ink: #E5EAE6; --ink-2: #C3CCC7; --muted: #97A39D; --line: #2F3A36;
+  --ai: #D9963E; --ai-ink: #EDB765; --ai-fill: #33260F; --trace: #86A2FF; --warn: #EE8573; --ok: #6CCB92; color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.55; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 1040px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 22px 48px; }
+.eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0; }
+.back { font-family: var(--mono); font-size: 12px; color: var(--muted); text-decoration: none; display: inline-block; margin-bottom: 18px; }
+.back:hover { color: var(--ink); }
+h1 { font-family: var(--display); font-weight: 700; font-size: clamp(32px, 6vw, 50px); line-height: 1.02; letter-spacing: -.015em; margin: .25em 0 .3em; text-wrap: balance; }
+.lede { margin: 0; max-width: 62ch; color: var(--ink-2); font-size: 17px; }
+a { color: var(--trace); }
+button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--trace); outline-offset: 2px; }
+
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 12px; margin-top: 20px; border-bottom: 1px solid var(--line); display: grid; gap: 10px; }
+.bar-row { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+.search { flex: 1 1 220px; min-width: 0; font-family: var(--mono); font-size: 13px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 9px 12px; }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--surface); }
+.seg button { font-family: var(--mono); font-size: 12px; padding: 6px 11px; border: 0; border-radius: 999px; background: none; color: var(--muted); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.jump { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+.jump a { flex: none; font-family: var(--mono); font-size: 12px; text-decoration: none; color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; white-space: nowrap; }
+.count { font-family: var(--mono); font-size: 11.5px; color: var(--muted); margin: 0; font-variant-numeric: tabular-nums; }
+
+.layer { margin-top: 44px; scroll-margin-top: 140px; }
+.layer > h2 { font-family: var(--display); font-weight: 700; font-size: clamp(26px, 4vw, 34px); letter-spacing: -.01em; margin: .2em 0 .3em; }
+.summary { margin: 0; max-width: 64ch; color: var(--ink-2); font-size: 17px; }
+.cat { margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--line); display: grid; gap: 14px; }
+.cat h3 { font-family: var(--display); font-weight: 600; font-size: 21px; margin: 0; }
+.cat .what { margin: 0; max-width: 66ch; }
+.opts { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+@media (min-width: 680px) { .opts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 980px) { .opts { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.opt { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 15px 12px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.opt-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.opt-head a { font-family: var(--display); font-weight: 600; font-size: 16.5px; color: var(--ink); text-decoration: none; }
+.opt-head a:hover { text-decoration: underline; }
+.kind { flex: none; font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.kind.cloud-service { color: var(--ai-ink); }
+.kind.standard { color: var(--trace); }
+.opt p { margin: 0; font-size: 15px; }
+.opt .lbl { font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 1px; }
+.opt .lbl.warn { color: var(--warn); }
+.checked { font-family: var(--mono); font-size: 11px; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 8px; margin-top: 2px; }
+.checked a { color: var(--muted); }
+.clouds { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+@media (min-width: 680px) { .clouds { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.cloud { padding: 12px 14px; background: var(--surface); }
+.cloud + .cloud { border-top: 1px solid var(--line); }
+@media (min-width: 680px) { .cloud + .cloud { border-top: 0; border-left: 1px solid var(--line); } }
+.cloud .eyebrow { margin-bottom: 4px; }
+.cloud ul { margin: 0; padding-left: 1.05em; font-size: 15px; }
+.cloud li::marker { color: var(--ai); }
+.note { margin: 0; font-size: 15px; color: var(--ink-2); max-width: 70ch; }
+.trade { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.trade li { padding-left: 20px; position: relative; max-width: 70ch; }
+.trade li::before { content: "⇄"; position: absolute; left: 0; color: var(--muted); font-family: var(--mono); font-size: 13px; top: 2px; }
+.empty { margin-top: 30px; color: var(--muted); }
+.planned { margin-top: 56px; padding-top: 18px; border-top: 2px solid var(--ink); }
+.planned ul { margin: 10px 0 0; padding-left: 1.1em; columns: 2 220px; color: var(--ink-2); }
+footer { margin-top: 44px; font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+[hidden] { display: none !important; }
+</style>
+
+<div class="wrap">
+  <header>
+    <a class="back" href="index.html">← Explorer</a>
+    <p class="eyebrow">AI Systems Field Guide · Stack map</p>
+    <h1>The current stack, layer by layer</h1>
+    <p class="lede">Tools, open standards and cloud services for each layer, with what each is good for and what to watch for. Options are listed alphabetically, so order never reads as a ranking, and every entry shows when it was last checked.</p>
+  </header>
+
+  <div class="bar">
+    <div class="bar-row">
+      <label class="eyebrow" for="q" style="position:absolute;left:-9999px">Filter</label>
+      <input class="search" id="q" type="search" placeholder="Filter by name or need, e.g. pgvector, residency, MCP" autocomplete="off">
+      <div class="seg" id="kindSeg" role="group" aria-label="Kind">
+        <button data-kind="all" aria-pressed="true">All</button>
+        <button data-kind="open-source" aria-pressed="false">Open source</button>
+        <button data-kind="commercial" aria-pressed="false">Commercial</button>
+        <button data-kind="cloud-service" aria-pressed="false">Cloud service</button>
+        <button data-kind="standard" aria-pressed="false">Standard</button>
+      </div>
+    </div>
+    <div class="bar-row" style="justify-content:space-between">
+      <nav class="jump" id="jump" aria-label="Layers"></nav>
+      <p class="count" id="count"></p>
+    </div>
+  </div>
+
+  <main id="main"></main>
+  <footer>Product names belong to their owners. Listing is not endorsement. Found something out of date? Corrections with a source are welcome on GitHub.</footer>
+</div>
+
+<script type="application/json" id="content">
+__CONTENT_JSON__
+</script>
+<script>
+(() => {
+  const D = JSON.parse(document.getElementById('content').textContent);
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const KIND = { 'open-source': 'Open source', commercial: 'Commercial', 'cloud-service': 'Cloud service', standard: 'Standard' };
+  const CLOUD = { aws: 'AWS', azure: 'Azure', gcp: 'Google Cloud' };
+  const state = { q: '', kind: 'all' };
+  const main = document.getElementById('main');
+  const published = D.layers.filter(l => l.stack);
+
+  document.getElementById('jump').innerHTML = published.map(l => `<a href="#${l.id}">${esc(l.name)}</a>`).join('');
+
+  function matches(o, c, l) {
+    if (state.kind !== 'all' && o.kind !== state.kind) return false;
+    if (!state.q) return true;
+    const hay = [o.name, o.good_for, o.watch_for, c.name, c.what, l.name].join(' ').toLowerCase();
+    return state.q.split(/\s+/).every(w => hay.includes(w));
+  }
+
+  function render() {
+    let shown = 0, h = '';
+    for (const l of published) {
+      let cats = '';
+      for (const c of l.stack.categories) {
+        const opts = (c.options || []).filter(o => matches(o, c, l));
+        if (!opts.length) continue;
+        shown += opts.length;
+        cats += `<section class="cat"><h3>${esc(c.name)}</h3><p class="what">${esc(c.what)}</p><div class="opts">`;
+        cats += opts.map(o => `<article class="opt">
+            <div class="opt-head"><a href="${esc(o.url)}" target="_blank" rel="noopener">${esc(o.name)}</a><span class="kind ${esc(o.kind)}">${esc(KIND[o.kind] || o.kind)}</span></div>
+            <p><span class="lbl">Good for</span>${esc(o.good_for)}</p>
+            <p><span class="lbl warn">Watch for</span>${esc(o.watch_for)}</p>
+            <p class="checked">Checked ${esc(o.verified)} · <a href="${esc(o.source)}" target="_blank" rel="noopener">source</a></p>
+          </article>`).join('');
+        cats += '</div>';
+        if (c.clouds) {
+          cats += '<div class="clouds">' + Object.keys(CLOUD).map(k => `<div class="cloud"><p class="eyebrow">${CLOUD[k]}</p>${(c.clouds[k] || []).length ? `<ul>${c.clouds[k].map(s => `<li>${esc(s)}</li>`).join('')}</ul>` : '<p class="note">No native service</p>'}</div>`).join('') + '</div>';
+        }
+        if (c.cloud_notes) cats += `<p class="note">${esc(c.cloud_notes)}</p>`;
+        if (c.tradeoffs && c.tradeoffs.length) cats += `<div><p class="eyebrow">Trade-offs</p><ul class="trade" style="margin-top:8px">${c.tradeoffs.map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>`;
+        cats += '</section>';
+      }
+      if (!cats) continue;
+      h += `<section class="layer" id="${esc(l.id)}"><p class="eyebrow">Trunk ${esc(l.trunk)} · ${esc(D.trunks[l.trunk])}</p><h2>${esc(l.name)}</h2><p class="summary">${esc(l.stack.summary)}</p>${cats}</section>`;
+    }
+    if (!shown) h = '<p class="empty">Nothing matches that filter. Try a broader word, or set the kind back to All.</p>';
+    const planned = D.layers.filter(l => !l.stack);
+    if (planned.length && !state.q && state.kind === 'all') {
+      h += `<section class="planned"><p class="eyebrow">Coming next</p><ul>${planned.map(l => `<li>${esc(l.name)}</li>`).join('')}</ul></section>`;
+    }
+    main.innerHTML = h;
+    const total = published.reduce((n, l) => n + l.stack.categories.reduce((m, c) => m + (c.options || []).length, 0), 0);
+    document.getElementById('count').textContent = shown === total ? `${total} entries across ${published.length} layers` : `${shown} of ${total} entries`;
+  }
+
+  document.getElementById('q').addEventListener('input', e => { state.q = e.target.value.trim().toLowerCase(); render(); });
+  document.getElementById('kindSeg').addEventListener('click', e => {
+    const b = e.target.closest('[data-kind]'); if (!b) return;
+    state.kind = b.dataset.kind;
+    document.querySelectorAll('#kindSeg button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    render();
+  });
+  render();
+  if (location.hash) { const t = document.getElementById(location.hash.slice(1)); if (t) t.scrollIntoView(); }
+})();
+</script>

@@ -2,6 +2,8 @@
 
 Nineteen layers, grouped under the guide's four questions. Each layer will get a page covering what it does, the concepts inside it, the current tool landscape with AWS, Azure and GCP equivalents, neutral trade-offs and red flags. Components already on the explorer diagram are linked.
 
+The tool landscapes live in [`data/stack/`](../data/stack) and render as the stack map page (`site/public/stack.html`). "In progress" means the landscape is published and the layer's concept pages are still being written.
+
 **Status key:** planned · in progress · published
 
 ## 1. How software works
@@ -21,11 +23,11 @@ Nineteen layers, grouped under the guide's four questions. Each layer will get a
 
 | Layer | On the diagram | Status |
 |---|---|---|
-| Models and serving | [LLM](components/llm.md) | planned |
-| Orchestration and agent frameworks | [Orchestrator](components/orchestrator.md) | planned |
-| Context and retrieval | [Retriever](components/retriever.md), [Vector index](components/vector-index.md) | planned |
-| Tools and protocols | [Tool layer](components/tool-layer.md) | planned |
-| Memory and state | | planned |
+| Models and serving | [LLM](components/llm.md) | in progress |
+| Orchestration and agent frameworks | [Orchestrator](components/orchestrator.md) | in progress |
+| Context and retrieval | [Retriever](components/retriever.md), [Vector index](components/vector-index.md) | in progress |
+| Tools and protocols | [Tool layer](components/tool-layer.md) | in progress |
+| Memory and state | | in progress |
 
 ## 3. How to build and operate it
 

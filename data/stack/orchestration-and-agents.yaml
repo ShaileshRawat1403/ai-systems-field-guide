@@ -1,0 +1,106 @@
+layer: orchestration-and-agents
+summary: "The code that runs an AI request: building context, calling the model, routing tool calls, checking results and deciding what happens next. Frameworks package this work; durable workflow engines keep it alive when it runs for minutes, hours or days."
+
+categories:
+  - id: agent-frameworks
+    name: Agent frameworks
+    what: "Libraries for building agents and multi-step AI workflows: the loop, tool calling, state, handoffs between agents and human approval points."
+    options:
+      - name: Agent Development Kit (Google)
+        kind: open-source
+        url: https://google.github.io/adk-docs/
+        good_for: "Code-first agents in Python, Go, TypeScript, Java or Kotlin, with MCP and A2A support across all five."
+        watch_for: "Tuned for Gemini and Google's platform. Python supports other model providers through adapters; check the language you plan to use."
+        verified: 2026-10
+        source: https://cloud.google.com/blog/topics/developers-practitioners/one-agent-development-kit-five-languages
+      - name: Claude Agent SDK
+        kind: commercial
+        url: https://code.claude.com/docs/en/agent-sdk/overview
+        good_for: "Embedding the agent loop that powers Claude Code, with built-in tools, permissions, hooks, subagents, sessions and MCP, in Python or TypeScript."
+        watch_for: "Runs Claude models only, and is governed by Anthropic's commercial terms."
+        verified: 2026-10
+        source: https://code.claude.com/docs/en/agent-sdk/overview
+      - name: CrewAI
+        kind: open-source
+        url: https://www.crewai.com
+        good_for: "Role-based teams of agents ('crews') plus event-driven 'flows' for more deterministic control."
+        watch_for: "Role-play style multi-agent setups can hide which agent made a decision. Keep tracing on."
+        verified: 2026-10
+        source: https://docs.crewai.com
+      - name: LangGraph
+        kind: open-source
+        url: https://www.langchain.com/langgraph
+        good_for: "Explicit graphs of steps with checkpointed state, durable execution and human-in-the-loop pauses. Stable 1.0 since October 2025."
+        watch_for: "More code and concepts than a simple loop needs. Its managed platform is a separate commercial product."
+        verified: 2026-10
+        source: https://www.langchain.com/blog/langgraph-v1
+      - name: LlamaIndex
+        kind: open-source
+        url: https://www.llamaindex.ai
+        good_for: "Document-heavy agents, with workflows tightly integrated with its retrieval and parsing tools."
+        watch_for: "The open-source library and the commercial LlamaCloud services are easy to confuse in planning and pricing."
+        verified: 2026-10
+        source: https://www.llamaindex.ai/enterprise
+      - name: Microsoft Agent Framework
+        kind: open-source
+        url: https://learn.microsoft.com/agent-framework/
+        good_for: "Agents and multi-agent workflows in .NET and Python. Version 1.0 shipped in April 2026 as the successor to Semantic Kernel and AutoGen."
+        watch_for: "Projects on Semantic Kernel or AutoGen face a migration. Microsoft publishes guides for both."
+        verified: 2026-10
+        source: https://devblogs.microsoft.com/agent-framework/microsoft-agent-framework-version-1-0/
+      - name: OpenAI Agents SDK
+        kind: open-source
+        url: https://openai.github.io/openai-agents-python/
+        good_for: "A small set of primitives: agents, handoffs, guardrails, sessions and built-in tracing."
+        watch_for: "Defaults and tracing are built around OpenAI's platform; other models need extra setup."
+        verified: 2026-10
+        source: https://pypi.org/p/openai-agents
+      - name: Pydantic AI
+        kind: open-source
+        url: https://ai.pydantic.dev
+        good_for: "Type-safe Python agents with validated, structured outputs, from the team behind Pydantic."
+        watch_for: "Python only."
+        verified: 2026-10
+        source: https://ai.pydantic.dev
+    clouds:
+      aws: [Amazon Bedrock AgentCore]
+      azure: [Foundry Agent Service]
+      gcp: [Agent Runtime on Gemini Enterprise Agent Platform]
+    cloud_notes: "All three host agents built with outside frameworks. AgentCore describes itself as framework and model agnostic. Foundry's hosted agents list Microsoft Agent Framework, LangGraph, the OpenAI Agents SDK and Anthropic's Agent SDK. Google's runtime is built first for ADK. Each also bundles memory, identity, tool gateways and observability, which is where the real lock-in sits."
+    tradeoffs:
+      - "A graph framework makes control flow visible and testable; an autonomous loop is faster to build and harder to predict. Regulated workflows usually need the visible version."
+      - "A provider's own SDK is the shortest path to that provider's newest features, and ties the orchestration code to that provider."
+      - "Plain code around a model API is often enough for one model call plus a few tools. A framework starts to pay off with branching, long-running state or human approval steps."
+
+  - id: durable-workflows
+    name: Durable workflow engines
+    what: "Engines that run long, multi-step processes reliably: each step is recorded, so a crash, retry or week-long wait for approval resumes where it stopped instead of starting over."
+    options:
+      - name: Inngest
+        kind: commercial
+        url: https://www.inngest.com
+        good_for: "Event-driven step functions for TypeScript and Python teams on serverless platforms."
+        watch_for: "Managed service by default; self-hosting is possible but less common."
+        verified: 2026-10
+        source: https://www.inngest.com/docs
+      - name: Restate
+        kind: open-source
+        url: https://restate.dev
+        good_for: "Lightweight durable execution with a single binary, suited to services and agents that need exactly-once steps."
+        watch_for: "Younger ecosystem than older workflow engines."
+        verified: 2026-10
+        source: https://docs.restate.dev
+      - name: Temporal
+        kind: open-source
+        url: https://temporal.io
+        good_for: "Mission-critical workflows at large scale, with SDKs in many languages and a managed cloud option."
+        watch_for: "Its programming model (deterministic workflow code) takes time for a team to learn."
+        verified: 2026-10
+        source: https://docs.temporal.io
+    clouds:
+      aws: [AWS Step Functions]
+      azure: [Azure Durable Functions]
+      gcp: [Google Cloud Workflows]
+    cloud_notes: "The cloud services are the quickest start inside one cloud. Moving the same workflow to another cloud later means rewriting it."
+    tradeoffs:
+      - "Agent frameworks keep state for a run, but most were not built for processes that wait days for a person. When a workflow includes approvals or long waits, a durable engine underneath is worth its learning curve."

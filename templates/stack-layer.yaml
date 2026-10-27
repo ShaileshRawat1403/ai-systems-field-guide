@@ -3,6 +3,7 @@
 # Options are listed alphabetically. Order never implies a ranking.
 
 layer: context-and-retrieval
+summary: "Two or three sentences on what this layer does and why it matters."
 
 categories:
   - id: vector-search

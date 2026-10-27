@@ -18,7 +18,7 @@ It's written for practitioners, so every concept connects back to something you 
 | **Component cards** | Twelve components, each with what it is, when to use it, when to skip it, one hands-on check and the red flags that show up in real projects. See [`content/components`](content/components). |
 | **Concept pages** | Each concept explained once, then shown working in three systems at one fictional company: a web app, an AI assistant and an agent using MCP. Every page has three views: Understand, Visualize and Apply. The first is [APIs and REST](content/concepts/apis-and-rest.md), with an HTTP simulator you can break on purpose. |
 | **Guided tours** | One request followed step by step across the diagram, with what can go wrong at each step. Start with [Follow a question](content/tours/leave-question.md). |
-| **The stack map** | Nineteen layers of the current stack, from interface to adoption, with tools, cloud equivalents and trade-offs. In progress, see [`content/README.md`](content/README.md). |
+| **The stack map** | Nineteen layers of the current stack, from interface to adoption, with tools, AWS, Azure and Google Cloud equivalents, and neutral trade-offs. The five layers of "How AI changes it" are filled in, with 65 dated and sourced entries. Data is in [`data/stack`](data/stack), and it renders as `site/public/stack.html`. The status of every layer is in [`content/README.md`](content/README.md). |
 
 ## How it's organized
 

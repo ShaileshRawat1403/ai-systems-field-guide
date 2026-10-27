@@ -1,0 +1,161 @@
+layer: models-and-serving
+summary: "Where the model comes from and where it runs. Most teams start with a hosted API, move some work to open-weight models for cost, control or data residency, and need a serving engine only when they host those models themselves."
+
+categories:
+  - id: model-apis
+    name: Hosted model APIs
+    what: "Frontier models you call over HTTPS and pay for by the token. No GPUs to run, but your data leaves your network unless you reach the model through your cloud provider."
+    options:
+      - name: Anthropic
+        kind: commercial
+        url: https://www.anthropic.com/api
+        good_for: "Claude models, long-context work, tool use and agentic coding. Also offered through all three major clouds."
+        watch_for: "Model availability differs by region when reached through a cloud provider."
+        verified: 2026-10
+        source: https://platform.claude.com/docs
+      - name: Cohere
+        kind: commercial
+        url: https://cohere.com
+        good_for: "Enterprise retrieval stacks that want generation, embeddings and reranking from one vendor, with private deployment options."
+        watch_for: "Smaller model range than the largest providers, so check fit for complex reasoning tasks."
+        verified: 2026-10
+        source: https://docs.cohere.com
+      - name: Google Gemini API
+        kind: commercial
+        url: https://ai.google.dev
+        good_for: "Gemini models, very long context and native multimodal input such as video and audio."
+        watch_for: "The developer API and the Google Cloud route have different terms, quotas and data handling. Pick the one your client's contract covers."
+        verified: 2026-10
+        source: https://ai.google.dev/gemini-api/docs
+      - name: Mistral AI
+        kind: commercial
+        url: https://mistral.ai
+        good_for: "European provider with both hosted and open-weight models, useful where EU data residency matters."
+        watch_for: "Feature parity between its hosted and open-weight models varies by release."
+        verified: 2026-10
+        source: https://docs.mistral.ai
+      - name: OpenAI
+        kind: commercial
+        url: https://platform.openai.com
+        good_for: "GPT models, a broad tool ecosystem, and Azure-hosted access for Microsoft-centric clients."
+        watch_for: "Direct API and Microsoft Foundry access differ in features, release timing and quotas."
+        verified: 2026-10
+        source: https://platform.openai.com/docs
+    clouds:
+      aws: [Amazon Bedrock]
+      azure: [Microsoft Foundry]
+      gcp: [Gemini Enterprise Agent Platform]
+    cloud_notes: "Azure AI Foundry became Microsoft Foundry in November 2025, and Google renamed Vertex AI to Gemini Enterprise Agent Platform in April 2026, so older documentation uses the previous names. The catalogs overlap but are not identical, and a model offered on a cloud may be limited to certain regions. For data residency, check the region before the model."
+    tradeoffs:
+      - "Calling a provider directly gets new models first. Calling it through the client's cloud usually wins on procurement, network isolation and existing data agreements, at the cost of a lag on new releases."
+      - "Model choice is easier to change than it looks if the orchestrator hides the provider behind one interface. It is expensive to change once prompts and evaluations are tuned to a single model's quirks."
+
+  - id: open-weight-models
+    name: Open-weight model families
+    what: "Models whose weights you can download and run yourself, on your own hardware or a cloud you control."
+    options:
+      - name: DeepSeek
+        kind: open-source
+        url: https://www.deepseek.com
+        good_for: "Large mixture-of-experts models with strong reasoning, under a permissive MIT license for recent weights."
+        watch_for: "The full-size models need multi-GPU servers. Some clients have policies on models from particular jurisdictions, so ask early."
+        verified: 2026-10
+        source: https://hidekazu-konishi.com/entry/open_weights_llm_release_history_and_timeline.html
+      - name: Gemma
+        kind: open-source
+        url: https://ai.google.dev/gemma
+        good_for: "Google's small and mid-sized models that run on a single GPU or a laptop. Gemma 4 moved to the Apache 2.0 license."
+        watch_for: "Earlier Gemma versions used custom terms, so check which version a project depends on."
+        verified: 2026-10
+        source: https://hidekazu-konishi.com/entry/open_weights_llm_release_history_and_timeline.html
+      - name: gpt-oss
+        kind: open-source
+        url: https://openai.com/index/introducing-gpt-oss/
+        good_for: "OpenAI's open-weight reasoning models under Apache 2.0, plus a safety classifier variant."
+        watch_for: "A narrower family than some others, with fewer size options."
+        verified: 2026-10
+        source: https://hidekazu-konishi.com/entry/open_weights_llm_release_history_and_timeline.html
+      - name: Llama
+        kind: open-source
+        url: https://www.llama.com
+        good_for: "Wide ecosystem support in tools and serving engines."
+        watch_for: "Released under Meta's own community license rather than a standard open-source license. The most recent open-weight release found was Llama 4 in April 2025."
+        verified: 2026-10
+        source: https://hidekazu-konishi.com/entry/open_weights_llm_release_history_and_timeline.html
+      - name: Mistral open models
+        kind: open-source
+        url: https://mistral.ai/models
+        good_for: "A range of Apache 2.0 models from small to large, including coding and reasoning variants."
+        watch_for: "Licenses differ between releases; at least one 2026 model uses a modified MIT license."
+        verified: 2026-10
+        source: https://hidekazu-konishi.com/entry/open_weights_llm_release_history_and_timeline.html
+      - name: Phi
+        kind: open-source
+        url: https://azure.microsoft.com/products/phi
+        good_for: "Microsoft's small models under MIT, for on-device and low-cost tasks."
+        watch_for: "Small models trade breadth of knowledge for speed, so test them on the actual task."
+        verified: 2026-10
+        source: https://hidekazu-konishi.com/entry/open_weights_llm_release_history_and_timeline.html
+      - name: Qwen
+        kind: open-source
+        url: https://qwen.ai
+        good_for: "Alibaba's family with many sizes, strong multilingual and coding variants, under Apache 2.0."
+        watch_for: "Frequent releases mean the 'current' version changes every few months. Pin the exact model in configuration."
+        verified: 2026-10
+        source: https://hidekazu-konishi.com/entry/open_weights_llm_release_history_and_timeline.html
+    clouds:
+      aws: [Amazon Bedrock, Amazon SageMaker AI]
+      azure: [Microsoft Foundry model catalog]
+      gcp: [Model Garden]
+    cloud_notes: "Each cloud hosts a selection of open-weight models as managed endpoints, so you can use them without running GPUs. The selection differs, and a model you plan to self-host may not be in a given catalog."
+    tradeoffs:
+      - "Self-hosting an open-weight model starts to pay off at steady, high volume or when data cannot leave the client's network. At low or spiky volume, the GPU bill usually exceeds the API bill."
+      - "A license that allows commercial use is the first check, not the last. Some licenses add conditions on user counts or acceptable use."
+
+  - id: inference-servers
+    name: Self-hosted inference servers
+    what: "Engines that load model weights onto your hardware and serve them over an API, usually one compatible with OpenAI's."
+    options:
+      - name: llama.cpp
+        kind: open-source
+        url: https://github.com/ggml-org/llama.cpp
+        good_for: "Running quantized models on CPUs, laptops and edge devices with very few dependencies."
+        watch_for: "Built for single-user or light use, not high-concurrency serving."
+        verified: 2026-10
+        source: https://github.com/ggml-org/llama.cpp
+      - name: Ollama
+        kind: open-source
+        url: https://ollama.com
+        good_for: "Running models on a developer machine with one command. Exposes OpenAI and Anthropic compatible APIs, and offers optional cloud-hosted models."
+        watch_for: "No continuous batching, so throughput falls sharply under concurrent load. Treat it as a local and prototyping tool, and note that ':cloud' models run on Ollama's servers."
+        verified: 2026-10
+        source: https://angelo-lima.fr/en/ollama-2026-state-of-the-art-en/
+      - name: SGLang
+        kind: open-source
+        url: https://www.sglang.io
+        good_for: "High-throughput production serving with prefix caching, from one GPU to large clusters, across NVIDIA, AMD, TPU and other hardware."
+        watch_for: "Operating it well takes GPU and infrastructure skills the client may not have."
+        verified: 2026-10
+        source: https://docs.sglang.io/
+      - name: Text Generation Inference
+        kind: open-source
+        url: https://huggingface.co/docs/text-generation-inference
+        good_for: "Existing deployments built on Hugging Face's server."
+        watch_for: "In maintenance mode since December 2025, taking only minor fixes. Hugging Face points new work to vLLM, SGLang or llama.cpp."
+        verified: 2026-10
+        source: https://aiwiki.ai/wiki/huggingface_tgi
+      - name: vLLM
+        kind: open-source
+        url: https://vllm.ai
+        good_for: "High-throughput production serving with paged attention and continuous batching, and broad model support."
+        watch_for: "Fast release cadence; pin versions and re-test after upgrades."
+        verified: 2026-10
+        source: https://docs.vllm.ai
+    clouds:
+      aws: [Amazon SageMaker AI, Amazon EKS]
+      azure: [Azure Machine Learning online endpoints, Azure Kubernetes Service]
+      gcp: [Model Garden self-deploy, Google Kubernetes Engine]
+    cloud_notes: "The managed options run these same engines behind the scenes. Kubernetes gives the most control and the most operational work."
+    tradeoffs:
+      - "A local runner and a production server solve different problems. The jump from one user to fifty concurrent users is where the choice of engine starts to matter."
+      - "GPU capacity, not software, is often the real constraint. Confirm the client can actually get the GPUs before designing around self-hosting."

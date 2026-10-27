@@ -1,0 +1,240 @@
+layer: context-and-retrieval
+summary: "Everything that decides what the model sees before it answers: turning documents into clean text, splitting and embedding them, searching for the right passages and putting the best ones first. Answer quality is capped by this layer."
+
+categories:
+  - id: document-parsing
+    name: Document parsing
+    what: "Turns PDFs, scans, slides and spreadsheets into clean, structured text that keeps tables, headings and reading order."
+    options:
+      - name: Docling
+        kind: open-source
+        url: https://www.docling.ai
+        good_for: "Self-hosted parsing with strong layout and table handling, started at IBM and now open source."
+        watch_for: "Runs its own models, so large batches need real compute."
+        verified: 2026-10
+        source: https://www.redhat.com/en/topics/ai/docling
+      - name: LlamaParse
+        kind: commercial
+        url: https://www.llamaindex.ai/llamaparse
+        good_for: "Hosted parsing of complex documents with minimal setup, part of LlamaCloud."
+        watch_for: "Documents are sent to a third-party service; check the client's data policy."
+        verified: 2026-10
+        source: https://www.llamaindex.ai/enterprise
+      - name: Unstructured
+        kind: open-source
+        url: https://unstructured.io
+        good_for: "Many file types through one interface, with an open-source library and a managed platform."
+        watch_for: "Quality on hard layouts depends on which strategy and tier you choose."
+        verified: 2026-10
+        source: https://docs.unstructured.io
+    clouds:
+      aws: [Amazon Textract]
+      azure: [Azure Document Intelligence]
+      gcp: [Google Document AI]
+    cloud_notes: "The cloud services keep documents inside the client's cloud tenancy, which often settles the decision in regulated work."
+    tradeoffs:
+      - "Parsing is where most retrieval failures start. A table flattened into a paragraph can't be retrieved correctly by any embedding model, so test parsing on the client's ugliest documents first."
+
+  - id: embedding-models
+    name: Embedding models
+    what: "Models that turn text (and sometimes images) into vectors, so that passages with similar meaning land close together."
+    options:
+      - name: BGE
+        kind: open-source
+        url: https://huggingface.co/BAAI
+        good_for: "Self-hosted multilingual embeddings from BAAI, with matching rerankers."
+        watch_for: "You run and scale the model yourself."
+        verified: 2026-10
+        source: https://huggingface.co/BAAI
+      - name: Cohere Embed
+        kind: commercial
+        url: https://cohere.com/embed
+        good_for: "Multilingual and multimodal embeddings, also available through Bedrock and Microsoft Foundry."
+        watch_for: "Vectors from one model version can't be mixed with another's; upgrades mean re-embedding."
+        verified: 2026-10
+        source: https://docs.cohere.com
+      - name: Gemini Embedding
+        kind: commercial
+        url: https://ai.google.dev/gemini-api/docs/embeddings
+        good_for: "Google's embedding models through the Gemini API or Google Cloud."
+        watch_for: "Same re-embedding cost on model changes as any hosted embedding."
+        verified: 2026-10
+        source: https://ai.google.dev/gemini-api/docs/embeddings
+      - name: OpenAI embeddings
+        kind: commercial
+        url: https://platform.openai.com/docs/guides/embeddings
+        good_for: "Widely supported embeddings with adjustable vector size, also through Microsoft Foundry."
+        watch_for: "Smaller vector sizes save storage but can lower retrieval quality; test both."
+        verified: 2026-10
+        source: https://platform.openai.com/docs/guides/embeddings
+      - name: Qwen3 Embedding
+        kind: open-source
+        url: https://huggingface.co/Qwen
+        good_for: "Open-weight embeddings with strong multilingual results, under Apache 2.0."
+        watch_for: "Larger variants need a GPU to embed at speed."
+        verified: 2026-10
+        source: https://huggingface.co/Qwen
+      - name: Voyage AI
+        kind: commercial
+        url: https://www.voyageai.com
+        good_for: "Domain-tuned embeddings (code, legal, finance) and rerankers. Part of MongoDB since 2025 and integrated with Atlas."
+        watch_for: "Product direction now follows MongoDB's platform."
+        verified: 2026-10
+        source: https://www.constellationr.com/blog-news/insights/mongodb-picks-voyage-ai-aims-integrate-model-reranking
+    clouds:
+      aws: [Embedding models in Amazon Bedrock]
+      azure: [Embedding models in Microsoft Foundry]
+      gcp: [Embedding models in Gemini Enterprise Agent Platform]
+    cloud_notes: "Each cloud offers its own embedding models plus some third-party ones. Keep the embedding model in the same region as the vector store."
+    tradeoffs:
+      - "Changing the embedding model means re-embedding every document. Choose with the corpus size in mind, and store which model produced each vector."
+      - "Public benchmark rankings rarely match a client's documents. Twenty real questions with known answers say more than a leaderboard."
+
+  - id: vector-search
+    name: Vector search
+    what: "Stores embeddings and returns the nearest matches to a query, usually alongside keyword search and metadata filters."
+    options:
+      - name: Chroma
+        kind: open-source
+        url: https://www.trychroma.com
+        good_for: "Embedded use in prototypes and small apps, with a hosted cloud option."
+        watch_for: "Check its scaling and operations story before carrying a prototype into production."
+        verified: 2026-10
+        source: https://docs.trychroma.com
+      - name: Elasticsearch
+        kind: open-source
+        url: https://www.elastic.co/elasticsearch
+        good_for: "Teams already running Elastic who want vector and keyword search in one engine. Now includes Jina's embedding and reranking models after Elastic's 2025 acquisition."
+        watch_for: "Licensing changed over the years; confirm which license and edition the client runs."
+        verified: 2026-10
+        source: https://ir.elastic.co/News--Events/news/news-details/2025/Elastic-Completes-Acquisition-of-Jina-AI-a-Leader-in-Frontier-Models-for-Multimodal-and-Multilingual-Search/default.aspx
+      - name: Milvus
+        kind: open-source
+        url: https://milvus.io
+        good_for: "Very large collections with distributed deployment; managed through Zilliz Cloud."
+        watch_for: "The distributed setup has many moving parts to operate."
+        verified: 2026-10
+        source: https://milvus.io/docs
+      - name: MongoDB Atlas Vector Search
+        kind: commercial
+        url: https://www.mongodb.com/products/platform/atlas-vector-search
+        good_for: "Clients already on MongoDB who want vectors next to their operational data."
+        watch_for: "Ties retrieval to the Atlas platform and its pricing."
+        verified: 2026-10
+        source: https://www.mongodb.com/docs/atlas/atlas-vector-search/
+      - name: OpenSearch
+        kind: open-source
+        url: https://opensearch.org
+        good_for: "Open-source search with vector, keyword and hybrid queries, hosted under the Linux Foundation."
+        watch_for: "Tuning for both vector and keyword workloads takes search expertise."
+        verified: 2026-10
+        source: https://opensearch.org/docs/latest/
+      - name: pgvector
+        kind: open-source
+        url: https://github.com/pgvector/pgvector
+        good_for: "Vector search inside an existing Postgres, so vectors, permissions and business data share one database and one backup."
+        watch_for: "Very large collections or heavy filtered search need careful indexing and tuning."
+        verified: 2026-10
+        source: https://github.com/pgvector/pgvector
+      - name: Pinecone
+        kind: commercial
+        url: https://www.pinecone.io
+        good_for: "A fully managed, serverless vector database with nothing to operate."
+        watch_for: "Data lives in a separate vendor service, which some clients' policies rule out."
+        verified: 2026-10
+        source: https://docs.pinecone.io
+      - name: Qdrant
+        kind: open-source
+        url: https://qdrant.tech
+        good_for: "Fast filtered search with rich payloads, self-hosted or managed."
+        watch_for: "Another database for the client to run, back up and secure."
+        verified: 2026-10
+        source: https://qdrant.tech/documentation/
+      - name: Weaviate
+        kind: open-source
+        url: https://weaviate.io
+        good_for: "Built-in hybrid search and modules for embedding at ingest, self-hosted or managed."
+        watch_for: "Built-in modules are convenient but couple ingestion to the database."
+        verified: 2026-10
+        source: https://weaviate.io/developers/weaviate
+    clouds:
+      aws: [Amazon S3 Vectors, Amazon OpenSearch Service, Amazon Aurora PostgreSQL with pgvector]
+      azure: [Azure AI Search, Azure Cosmos DB vector search, Azure Database for PostgreSQL with pgvector]
+      gcp: [Agent Platform Vector Search, AlloyDB for PostgreSQL, Cloud SQL for PostgreSQL with pgvector]
+    cloud_notes: "Amazon S3 Vectors became generally available in December 2025 as low-cost vector storage inside S3. Azure AI Search is also marketed as Foundry IQ; the service and its APIs are the same. Google's Agent Platform Vector Search is separate from its newer Agent Retrieval product."
+    tradeoffs:
+      - "A separate vector database starts to pay off at large scale, very high query volume or with demanding filters. Below that, vectors inside the database the client already runs are simpler to secure and operate."
+      - "Document permissions must travel with the vectors. If the store can't filter by who may see a chunk, retrieval will eventually leak something."
+
+  - id: reranking
+    name: Rerankers
+    what: "Models that re-score a short list of retrieved passages against the question, so the most relevant ones reach the model first."
+    options:
+      - name: BGE Reranker
+        kind: open-source
+        url: https://huggingface.co/BAAI
+        good_for: "Self-hosted reranking paired with BGE embeddings."
+        watch_for: "Adds a model to host and its latency to every query."
+        verified: 2026-10
+        source: https://huggingface.co/BAAI
+      - name: Cohere Rerank
+        kind: commercial
+        url: https://cohere.com/rerank
+        good_for: "Hosted multilingual reranking, also available through Bedrock and Microsoft Foundry."
+        watch_for: "Per-search pricing adds up at high query volume."
+        verified: 2026-10
+        source: https://docs.cohere.com
+      - name: Jina Reranker
+        kind: commercial
+        url: https://jina.ai/reranker/
+        good_for: "Multilingual and multimodal reranking, now part of Elastic."
+        watch_for: "Roadmap now follows Elastic's platform."
+        verified: 2026-10
+        source: https://www.businesswire.com/news/home/20251009619654/en/Elastic-Completes-Acquisition-of-Jina-AI-a-Leader-in-Frontier-Models-for-Multimodal-and-Multilingual-Search
+      - name: Voyage Rerank
+        kind: commercial
+        url: https://www.voyageai.com
+        good_for: "Reranking that pairs with Voyage embeddings and MongoDB Atlas."
+        watch_for: "Strongest fit inside the MongoDB ecosystem."
+        verified: 2026-10
+        source: https://learn.mongodb.com/learn/course/voyage-ai-with-mongodb-on-demand-devrel-content/voyage-ai-with-mongodb/reranking-results-with-voyage-ai-rerankers?page=2
+    clouds:
+      aws: [Rerank models in Amazon Bedrock]
+      azure: [Azure AI Search reranking]
+      gcp: [Ranking API]
+    cloud_notes: "Reranking is often a setting inside the cloud's search service rather than a separate model you call."
+    tradeoffs:
+      - "A reranker is usually the cheapest quality gain in a RAG system, because it works on a short list. Add it before switching embedding models."
+
+  - id: managed-retrieval
+    name: Managed retrieval services
+    what: "Cloud services that bundle ingestion, chunking, embedding, search and citation into one managed pipeline."
+    options:
+      - name: Amazon Bedrock Knowledge Bases
+        kind: cloud-service
+        url: https://aws.amazon.com/bedrock/knowledge-bases/
+        good_for: "RAG over S3 and other sources with managed chunking and a choice of vector stores."
+        watch_for: "Defaults for chunking and parsing suit average documents; complex ones still need tuning."
+        verified: 2026-10
+        source: https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html
+      - name: Azure AI Search knowledge bases
+        kind: cloud-service
+        url: https://azure.microsoft.com/products/search/
+        good_for: "Agentic retrieval with query planning, hybrid search and reranking, reusable across agents. Marketed as Foundry IQ."
+        watch_for: "Agentic retrieval makes several model calls per question, which raises cost and latency."
+        verified: 2026-10
+        source: https://azure.microsoft.com/products/search/
+      - name: RAG Engine (Google)
+        kind: cloud-service
+        url: https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/rag-engine/use-vertexai-vector-search
+        good_for: "Managed corpora on Gemini Enterprise Agent Platform with a choice of vector databases."
+        watch_for: "Built around Gemini models and Google's platform."
+        verified: 2026-10
+        source: https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/rag-engine/use-vertexai-vector-search
+    clouds:
+      aws: [Amazon Bedrock Knowledge Bases]
+      azure: [Azure AI Search]
+      gcp: [RAG Engine, Agent Search]
+    cloud_notes: "These are the fastest route to a working pilot inside one cloud, and the hardest part of the stack to move later."
+    tradeoffs:
+      - "A managed pipeline gets a pilot live in days. The cost shows up later, when a retrieval problem needs a fix the service doesn't expose as a setting."
