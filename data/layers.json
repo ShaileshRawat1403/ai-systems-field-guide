@@ -2,6 +2,7 @@
   "layers": [
     { "id": "interface", "name": "Interface", "trunk": 1, "status": "planned" },
     { "id": "application-and-apis", "name": "Application and APIs", "trunk": 1, "status": "planned" },
+    { "id": "data-and-contracts", "name": "Data and contracts", "trunk": 1, "status": "planned" },
     { "id": "identity", "name": "Identity and access", "trunk": 1, "status": "planned" },
     { "id": "operational-data", "name": "Operational data", "trunk": 1, "status": "planned" },
     { "id": "storage-and-caching", "name": "Storage and caching", "trunk": 1, "status": "planned" },

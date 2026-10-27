@@ -1,0 +1,314 @@
+<title>__TITLE__</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Schibsted+Grotesk:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Layout: one reading column; a sticky bar holds the system switch (applies to every view) and the three view tabs. */
+:root {
+  --bg: #ECEFEA;
+  --surface: #F8F9F6;
+  --ink: #17201D;
+  --ink-2: #36423D;
+  --muted: #5E6A64;
+  --line: #CDD3CD;
+  --edge: #9AA59F;
+  --ai: #B8730F;
+  --ai-ink: #8C5306;
+  --ai-fill: #F5E6CC;
+  --trace: #2350C8;
+  --on-trace: #FFFFFF;
+  --warn: #A63A2A;
+  --ok: #2E7A4C;
+  --code-bg: #E2E7E1;
+  --hl: #D6DFF5;
+  --display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --body: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111715; --surface: #19211E; --ink: #E5EAE6; --ink-2: #C3CCC7; --muted: #97A39D;
+    --line: #2F3A36; --edge: #5A6762; --ai: #D9963E; --ai-ink: #EDB765; --ai-fill: #33260F;
+    --trace: #86A2FF; --on-trace: #0B1330; --warn: #EE8573; --ok: #6CCB92; --code-bg: #0C1110; --hl: #1E2A4A;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111715; --surface: #19211E; --ink: #E5EAE6; --ink-2: #C3CCC7; --muted: #97A39D;
+  --line: #2F3A36; --edge: #5A6762; --ai: #D9963E; --ai-ink: #EDB765; --ai-fill: #33260F;
+  --trace: #86A2FF; --on-trace: #0B1330; --warn: #EE8573; --ok: #6CCB92; --code-bg: #0C1110; --hl: #1E2A4A;
+  color-scheme: dark;
+}
+
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.55; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap {
+  max-width: 880px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 22px 40px;
+}
+.eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0; }
+.back { font-family: var(--mono); font-size: 12px; color: var(--muted); text-decoration: none; display: inline-block; margin-bottom: 18px; }
+.back:hover { color: var(--ink); }
+h1 { font-family: var(--display); font-weight: 700; font-size: clamp(32px, 6vw, 50px); line-height: 1.02; letter-spacing: -.015em; margin: .25em 0 .3em; text-wrap: balance; }
+.what { font-size: clamp(18px, 2.4vw, 21px); line-height: 1.42; margin: 0; max-width: 58ch; }
+code { font-family: var(--mono); font-size: .86em; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+
+.bar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg);
+  display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; justify-content: space-between;
+  padding-block: 12px 0; margin-top: 22px; border-bottom: 1px solid var(--line);
+}
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--surface); max-width: 100%; }
+.seg button { font-family: var(--mono); font-size: 12px; padding: 6px 11px; border: 0; border-radius: 999px; background: none; color: var(--muted); cursor: pointer; white-space: nowrap; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.tabs { display: inline-flex; gap: 20px; }
+.tabs button { font-family: var(--display); font-weight: 600; font-size: 15.5px; padding: 10px 0 11px; margin-bottom: -1px; border: 0; border-bottom: 2px solid transparent; background: none; color: var(--muted); cursor: pointer; }
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+button:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible { outline: 2px solid var(--trace); outline-offset: 2px; }
+@media (max-width: 520px) { .seg button { padding: 6px 8px; font-size: 11.5px; } }
+
+main { margin-top: 26px; }
+.view { display: grid; gap: 22px; }
+.understand { margin: 0; max-width: 64ch; color: var(--ink-2); font-size: 17px; }
+.ctx-block { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: grid; gap: 8px; }
+.ctx-block p { margin: 0; max-width: 64ch; }
+.ctx-block .who { font-family: var(--display); font-size: 16px; }
+dl { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; margin: 0; }
+@media (min-width: 640px) { dl { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 26px; } .row { grid-column: 1 / -1; } .row.half { grid-column: auto; } }
+dt { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 5px; }
+dd { margin: 0; }
+.warn { color: var(--warn); }
+.row.check dd { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.flags { margin: 0; padding-left: 1.1em; }
+.flags li + li { margin-top: 5px; }
+.flags li::marker { color: var(--warn); }
+.across { border-top: 2px solid var(--ink); padding-top: 14px; }
+.across p:last-child { margin: 8px 0 0; font-size: 18px; line-height: 1.5; max-width: 62ch; }
+.chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 8px; }
+.chip { font-family: var(--mono); font-size: 12px; padding: 5px 11px; border: 1px dashed var(--line); border-radius: 999px; color: var(--muted); }
+.soon { font-family: var(--mono); font-size: 11px; color: var(--muted); margin: 8px 0 0; }
+
+/* Visualize */
+.vis { display: grid; gap: 18px; }
+@media (min-width: 760px) { .vis { grid-template-columns: minmax(300px, 380px) minmax(0, 1fr); align-items: start; } }
+.vis svg { display: block; width: 100%; height: auto; max-height: 74vh; }
+.edge { fill: none; stroke: var(--edge); stroke-width: 1.5; transition: opacity .25s, stroke .25s; }
+.edge.on { stroke: var(--trace); stroke-width: 2.6; }
+.edge.dim { opacity: .2; }
+.node rect { fill: var(--surface); stroke: var(--ink-2); stroke-width: 1.2; transition: stroke .2s; }
+.node.ai rect { fill: var(--ai-fill); stroke: var(--ai); }
+.node.focus rect { stroke: var(--ink); stroke-width: 2.4; }
+.node .kind { font-family: var(--mono); font-size: 7.4px; letter-spacing: .09em; fill: var(--muted); text-anchor: middle; }
+.node.ai .kind { fill: var(--ai-ink); }
+.node .name { font-family: var(--display); font-weight: 600; font-size: 12.5px; fill: var(--ink); text-anchor: middle; }
+.node { transition: opacity .25s; }
+.node.dim { opacity: .3; }
+.node.on rect { stroke: var(--trace); stroke-width: 2.4; }
+.pulse { fill: var(--trace); }
+.pulse-halo { fill: var(--trace); opacity: .22; }
+.pulse-label { font-family: var(--mono); font-size: 9px; fill: var(--trace); }
+.carries { font-family: var(--mono); font-size: 12.5px; margin: 0; color: var(--ink-2); }
+.carries strong { color: var(--trace); font-weight: 500; }
+.steps { margin: 12px 0 0; padding-left: 1.3em; display: grid; gap: 8px; }
+.steps li::marker { font-family: var(--mono); color: var(--muted); font-size: .85em; }
+.btn { font-family: var(--display); font-weight: 600; font-size: 15px; padding: 9px 15px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.btn.primary { background: var(--trace); border-color: var(--trace); color: var(--on-trace); }
+.btn:disabled { opacity: .45; cursor: default; }
+
+footer { margin-top: 40px; font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+__EXPERIMENT_CSS__
+</style>
+
+<div class="wrap">
+  <header>
+    <a class="back" href="../index.html">← Explorer</a>
+    <p class="eyebrow" id="crumb"></p>
+    <h1 id="title"></h1>
+    <p class="what" id="what"></p>
+  </header>
+
+  <div class="bar">
+    <div class="seg" id="ctxSeg" role="group" aria-label="Show it in">
+      <button id="ctx-web" data-ctx="web" aria-pressed="true">Web app</button>
+      <button id="ctx-assistant" data-ctx="assistant" aria-pressed="false">AI assistant</button>
+      <button id="ctx-mcp" data-ctx="mcp" aria-pressed="false">Agent with MCP</button>
+    </div>
+    <div class="tabs" role="tablist" aria-label="View">
+      <button id="tab-understand" role="tab" data-view="understand" aria-selected="true">Understand</button>
+      <button id="tab-visualize" role="tab" data-view="visualize" aria-selected="false">Visualize</button>
+      <button id="tab-apply" role="tab" data-view="apply" aria-selected="false">Apply</button>
+    </div>
+  </div>
+
+  <main>
+    <section class="view" id="view-understand" aria-labelledby="tab-understand"></section>
+    <section class="view" id="view-visualize" aria-labelledby="tab-visualize" hidden></section>
+    <section class="view" id="view-apply" aria-labelledby="tab-apply" hidden></section>
+  </main>
+
+  <footer>AI Systems Field Guide · Concept pilot · Nimbus Freight and its people are fictional.</footer>
+</div>
+
+<script type="application/json" id="content">
+__CONTENT_JSON__
+</script>
+<script>
+__EXPERIMENT_JS__
+</script>
+<script>
+(() => {
+  const D = JSON.parse(document.getElementById('content').textContent);
+  const C = D.concept;
+  const X = window.FG_EXPERIMENT || null;
+  const CTX = { web: 'Web app', assistant: 'AI assistant', mcp: 'Agent with MCP' };
+  const SYS = { web: 'the leave portal', assistant: 'Ask HR', mcp: 'the HR MCP server' };
+  const VIEWS = ['understand', 'visualize', 'apply'];
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const md = s => esc(s).replace(/`([^`]+)`/g, '<code>$1</code>');
+
+  let saved = null;
+  try { saved = localStorage.getItem('fg-context'); } catch (e) {}
+  const state = { ctx: CTX[saved] ? saved : 'web', view: 'understand' };
+
+  document.getElementById('crumb').textContent = `Trunk ${D.layer.trunk} · ${D.layer.name} · Path phase ${C.phase}`;
+  document.getElementById('title').textContent = C.name;
+  document.getElementById('what').innerHTML = md(C.card.what);
+
+  // Understand
+  function renderUnderstand() {
+    const k = C.contexts[state.ctx] || {};
+    const c = C.card;
+    let h = `<p class="understand">${md(c.understand)}</p>`;
+    h += `<div class="ctx-block"><p class="eyebrow">In the ${esc(CTX[state.ctx].toLowerCase())} · ${esc(SYS[state.ctx])}</p>`;
+    h += `<p class="who"><strong>Who calls:</strong> ${md(k.who)}</p><p>${md(k.text)}</p></div>`;
+    h += '<dl>';
+    if (c.use) h += `<div class="row half"><dt>Use when</dt><dd>${md(c.use)}</dd></div><div class="row half"><dt>Skip when</dt><dd>${md(c.skip)}</dd></div>`;
+    h += `<div class="row check"><dt>The check</dt><dd>${md(c.check)}</dd></div>`;
+    h += `<div class="row"><dt class="warn">Red flags</dt><dd><ul class="flags">${c.flags.map(f => `<li>${md(f)}</li>`).join('')}</ul></dd></div></dl>`;
+    if (C.across) h += `<div class="across"><p class="eyebrow">Across all three</p><p>${md(C.across)}</p></div>`;
+    if (D.related.length) h += `<div><p class="eyebrow">Related concepts</p><div class="chips">${D.related.map(r => `<span class="chip">${esc(r)}</span>`).join('')}</div><p class="soon">Pages for these are on the way.</p></div>`;
+    document.getElementById('view-understand').innerHTML = h;
+  }
+
+  // Visualize
+  const NS = 'http://www.w3.org/2000/svg';
+  const mk = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const a in attrs) e.setAttribute(a, attrs[a]); if (parent) parent.appendChild(e); return e; };
+  let vis = null;
+  function buildVisual() {
+    const root = document.getElementById('view-visualize');
+    if (!X || !X.diagram) { root.innerHTML = '<p>No diagram for this concept yet.</p>'; return; }
+    const G = X.diagram;
+    root.innerHTML = `<div class="vis"><div><svg viewBox="${G.viewBox}" role="img" aria-label="Where this concept sits"></svg></div>
+      <div><p class="carries" id="carries"></p><ol class="steps" id="steps"></ol>
+      <p style="margin:16px 0 0"><button class="btn" id="replay">Replay</button></p></div></div>`;
+    const svg = root.querySelector('svg');
+    const gE = mk('g', {}, svg), gN = mk('g', {}, svg), gP = mk('g', {}, svg);
+    const edges = {}, nodes = {};
+    G.edges.forEach(e => { edges[e.from + '>' + e.to] = { el: mk('path', { d: e.d, class: 'edge' }, gE), e }; });
+    G.nodes.forEach(n => {
+      const g = mk('g', { class: 'node' + (n.ai ? ' ai' : '') + (n.focus ? ' focus' : '') }, gN);
+      mk('rect', { x: n.x - n.w / 2, y: n.y, width: n.w, height: 46, rx: n.pill ? 23 : 7 }, g);
+      mk('text', { x: n.x, y: n.y + 18, class: 'kind' }, g).textContent = n.kind;
+      mk('text', { x: n.x, y: n.y + 34, class: 'name' }, g).textContent = n.name;
+      nodes[n.id] = g;
+    });
+    const halo = mk('circle', { r: 9, cx: -40, cy: -40, class: 'pulse-halo' }, gP);
+    const dot = mk('circle', { r: 4.5, cx: -40, cy: -40, class: 'pulse' }, gP);
+    const label = mk('text', { x: -40, y: -40, class: 'pulse-label' }, gP);
+    vis = { edges, nodes, halo, dot, label, raf: 0, token: 0 };
+    root.querySelector('#replay').addEventListener('click', () => animate());
+  }
+  function findEdge(a, b) {
+    if (vis.edges[a + '>' + b]) return { el: vis.edges[a + '>' + b].el, rev: false };
+    if (vis.edges[b + '>' + a]) return { el: vis.edges[b + '>' + a].el, rev: true };
+    return null;
+  }
+  function renderVisual() {
+    if (!vis) buildVisual();
+    if (!vis) return;
+    const k = C.contexts[state.ctx] || { path: [], steps: [] };
+    const onNodes = new Set(k.path);
+    const onEdges = new Set();
+    k.path.slice(1).forEach((b, i) => { const f = findEdge(k.path[i], b); if (f) onEdges.add(f.el); });
+    Object.entries(vis.nodes).forEach(([id, g]) => { g.classList.toggle('on', onNodes.has(id)); g.classList.toggle('dim', !onNodes.has(id)); });
+    Object.values(vis.edges).forEach(({ el }) => { el.classList.toggle('on', onEdges.has(el)); el.classList.toggle('dim', !onEdges.has(el)); });
+    document.getElementById('carries').innerHTML = `Identity travels as: <strong>${esc(k.carries)}</strong>`;
+    document.getElementById('steps').innerHTML = k.steps.map(s => `<li>${md(s)}</li>`).join('');
+    animate();
+  }
+  function animate() {
+    if (!vis) return;
+    vis.token++; cancelAnimationFrame(vis.raf);
+    const { dot, halo, label } = vis;
+    const hide = () => [dot, halo, label].forEach(e => e.style.visibility = 'hidden');
+    hide();
+    if (reduce || state.view !== 'visualize') return;
+    const k = C.contexts[state.ctx];
+    const segs = k.path.slice(1).map((b, i) => findEdge(k.path[i], b)).filter(Boolean);
+    if (!segs.length) return;
+    const my = vis.token; let i = 0, start = null; const dur = 700;
+    label.textContent = k.carries;
+    [dot, halo, label].forEach(e => e.style.visibility = 'visible');
+    const tick = t => {
+      if (my !== vis.token) return;
+      if (start === null) start = t;
+      const s = segs[i], len = s.el.getTotalLength();
+      const p = Math.min(1, (t - start) / dur);
+      const e = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+      const pt = s.el.getPointAtLength((s.rev ? 1 - e : e) * len);
+      dot.setAttribute('cx', pt.x); dot.setAttribute('cy', pt.y); halo.setAttribute('cx', pt.x); halo.setAttribute('cy', pt.y);
+      const right = pt.x > 230;
+      label.setAttribute('x', right ? pt.x - 12 : pt.x + 12); label.setAttribute('y', pt.y - 8);
+      label.setAttribute('text-anchor', right ? 'end' : 'start');
+      if (p >= 1) { i++; start = null; if (i >= segs.length) { setTimeout(() => { if (my === vis.token) hide(); }, 600); return; } }
+      vis.raf = requestAnimationFrame(tick);
+    };
+    vis.raf = requestAnimationFrame(tick);
+  }
+
+  // Apply
+  let mounted = false;
+  function renderApply() {
+    const root = document.getElementById('view-apply');
+    if (!X || !X.mount) { root.innerHTML = '<p>No experiment for this concept yet.</p>'; return; }
+    if (!mounted) { X.mount(root, { context: state.ctx }); mounted = true; }
+    else if (X.setContext) X.setContext(state.ctx);
+  }
+
+  function render() {
+    VIEWS.forEach(v => {
+      document.getElementById('view-' + v).hidden = v !== state.view;
+      document.getElementById('tab-' + v).setAttribute('aria-selected', String(v === state.view));
+    });
+    Object.keys(CTX).forEach(c => document.getElementById('ctx-' + c).setAttribute('aria-pressed', String(c === state.ctx)));
+    if (state.view === 'understand') renderUnderstand();
+    if (state.view === 'visualize') renderVisual();
+    if (state.view === 'apply') renderApply();
+  }
+
+  document.getElementById('ctxSeg').addEventListener('click', ev => {
+    const b = ev.target.closest('[data-ctx]'); if (!b) return;
+    state.ctx = b.dataset.ctx;
+    try { localStorage.setItem('fg-context', state.ctx); } catch (e) {}
+    render();
+  });
+  document.querySelector('.tabs').addEventListener('click', ev => {
+    const b = ev.target.closest('[data-view]'); if (!b) return;
+    state.view = b.dataset.view;
+    if (location.hash !== '#' + state.view) location.hash = state.view;
+    render();
+  });
+  function route() {
+    const h = location.hash.slice(1);
+    if (VIEWS.includes(h)) state.view = h;
+    render();
+  }
+  window.addEventListener('hashchange', route);
+  route();
+})();
+</script>

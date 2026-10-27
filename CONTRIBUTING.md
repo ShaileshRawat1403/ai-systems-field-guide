@@ -19,14 +19,18 @@ This guide is useful only if it stays accurate, neutral and practical. These rul
 
 **Disclose affiliations.** If you work for, invest in or are paid by a vendor you're adding or editing, say so in the pull request.
 
-**Keep the card format.** Components follow [`templates/component.md`](templates/component.md): What, a short explanation, Use when, Skip when, The check, Red flags. Stack layers follow [`templates/stack-layer.yaml`](templates/stack-layer.yaml).
+**Keep the card format.** Components follow [`templates/component.md`](templates/component.md) and concepts follow [`templates/concept.md`](templates/concept.md): What, a short explanation, Use when, Skip when, The check, Red flags. Stack layers follow [`templates/stack-layer.yaml`](templates/stack-layer.yaml).
+
+**One home per concept.** Before writing a new concept, check the inventory in [docs/design.md](docs/design.md). If a concept already has a page, improve that page rather than explaining it again somewhere else.
+
+**Use Nimbus Freight.** Examples happen at the guide's one fictional company and its three systems, so readers recognize them from page to page. Never use real people or real companies as examples.
 
 **Write plainly.** Short sentences, everyday words and no hype. If a newcomer can't repeat the "What" line back to you, rewrite it.
 
 ## How to submit
 
 1. Fork the repo and make your change.
-2. Run `npm install` and then `npm run check`. It validates every file and rebuilds `site/public/index.html`.
+2. Run `npm install` and then `npm run check`. It validates every file and rebuilds everything in `site/public`.
 3. Commit the rebuilt page together with your change, since CI fails if they drift apart.
 4. Open a pull request that says what changed and why, with sources.
 
