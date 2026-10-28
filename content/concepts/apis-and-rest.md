@@ -72,14 +72,14 @@ Carries: Priya's token
 
 **Who calls:** any approved MCP client, such as a desktop assistant or an internal agent, through the HR MCP server.
 
-The HR MCP server wraps the same endpoint as a tool called `get_leave_balance`, with a name, a description and an input schema that clients discover when they connect. Underneath, it makes the same REST call. What MCP adds is discovery and a standard handshake, so one integration serves every compatible client instead of one custom integration per assistant. Priya signs in through OAuth, so the server acts with her permissions and nobody else's.
+The HR MCP server wraps the same endpoint as a tool called `get_leave_balance`, with a name, a description and an input schema that any client can discover by asking the server which tools it offers. Underneath, it makes the same REST call. What MCP adds is discovery and a standard way to call tools, so one integration serves every compatible client instead of one custom integration per assistant. Priya signs in through OAuth, so the server acts with her permissions and nobody else's.
 
 Path: user → mcp-client → mcp-server → api → backend → database
 
 Carries: OAuth token
 
 1. Priya uses an AI app that is connected to the HR MCP server.
-2. On connection, the app discovers the get_leave_balance tool.
+2. The app asks the MCP server which tools it offers and finds get_leave_balance.
 3. When she asks about her leave, the app calls that tool through MCP.
 4. The MCP server translates the call into the same REST request.
 5. The backend checks her OAuth token and returns JSON.

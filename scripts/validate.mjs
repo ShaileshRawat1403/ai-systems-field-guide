@@ -110,6 +110,7 @@ for (const s of loadStack()) {
   const where = `data/stack/${s.file}`;
   if (s.layer !== fileId(s.file)) err(`${where}: "layer" must match the file name`);
   if (!layerIds.has(s.layer)) err(`${where}: unknown layer "${s.layer}"`);
+  if (!s.summary) err(`${where}: needs a "summary" of the layer`);
   if (!Array.isArray(s.categories) || s.categories.length === 0) { err(`${where}: needs categories`); continue; }
   for (const c of s.categories) {
     const at = `${where} › ${c.id || '(no id)'}`;

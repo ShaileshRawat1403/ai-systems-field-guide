@@ -1,9 +1,10 @@
 // Builds the site from the content and data files.
-// Output goes to site/public/: the explorer (index.html) and one page per concept (concepts/<id>.html).
+// Output goes to site/public/: the explorer (index.html), one page per concept (concepts/<id>.html)
+// and the stack map (stack.html).
 // The output is committed so it opens without a build.
 import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { ROOT, read, readJSON, list, parseComponent, parseConcept, parseTour } from './lib.mjs';
+import { ROOT, read, readJSON, list, parseComponent, parseConcept, parseTour, loadStack } from './lib.mjs';
 
 const { trunks } = readJSON('data/trunks.json');
 const { layers } = readJSON('data/layers.json');
@@ -56,3 +57,9 @@ for (const c of concepts) {
   writeFileSync(join(ROOT, `site/public/concepts/${c.id}.html`), html);
   console.log(`Built site/public/concepts/${c.id}.html`);
 }
+
+// Stack map
+const stack = Object.fromEntries(loadStack().map(s => [s.layer, s]));
+const stackData = { trunks, layers: layers.map(l => ({ ...l, stack: stack[l.id] ? { summary: stack[l.id].summary, categories: stack[l.id].categories } : null })) };
+writeFileSync(join(ROOT, 'site/public/stack.html'), fill(read('site/src/stack.template.html'), { __CONTENT_JSON__: safeJSON(stackData) }));
+console.log(`Built site/public/stack.html from ${Object.keys(stack).length} layer file(s).`);

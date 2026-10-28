@@ -1,0 +1,70 @@
+layer: tools-and-protocols
+summary: "How models reach the outside world. Tool calling lets a model ask for an action; protocols standardize how tools, other agents and user interfaces connect, so one integration can serve many clients."
+
+categories:
+  - id: protocols
+    name: Open protocols
+    what: "Shared standards for connecting agents to tools, to other agents and to the people using them."
+    options:
+      - name: A2A (Agent2Agent)
+        kind: standard
+        url: https://a2a-protocol.org
+        good_for: "Agents from different vendors or teams discovering each other and delegating tasks. Version 1.0 shipped in March 2026, and the project joined the Agentic AI Foundation in August 2026."
+        watch_for: "Most projects need tools before they need agent-to-agent delegation. Add it when there really are separate agents owned by separate teams."
+        verified: 2026-10
+        source: https://aaif.io/blog/a2a-joins-aaif
+      - name: AG-UI
+        kind: standard
+        url: https://github.com/ag-ui-protocol/ag-ui
+        good_for: "Streaming an agent's progress, tool calls and state to a frontend, and sending user input back, started by CopilotKit."
+        watch_for: "Younger and less widely adopted than MCP; check support in the frameworks you plan to use."
+        verified: 2026-10
+        source: https://docs.copilotkit.ai/ag-ui
+      - name: MCP (Model Context Protocol)
+        kind: standard
+        url: https://modelcontextprotocol.io
+        good_for: "Exposing tools, data and prompts once so any compatible AI client can use them. Hosted by the Agentic AI Foundation under the Linux Foundation."
+        watch_for: "The 2026-07-28 specification made the protocol stateless, replaced the initialize handshake with optional discovery, and moved features such as Tasks into extensions. Older servers and tutorials describe sessions that no longer exist."
+        verified: 2026-10
+        source: https://aaif.io/blog/mcp-2026-changes-the-rules
+    clouds:
+      aws: [Amazon Bedrock AgentCore Gateway]
+      azure: [Foundry Agent Service toolboxes, Azure API Management]
+      gcp: [Agent Gateway]
+    cloud_notes: "Each cloud now offers a gateway that turns existing APIs into agent tools and applies policy in one place. Foundry Agent Service supports A2A 1.0 as generally available."
+    tradeoffs:
+      - "A protocol is worth adopting when more than one client will use the same tools. For one assistant calling three internal APIs, plain tool definitions are simpler."
+
+  - id: mcp-servers-and-gateways
+    name: MCP servers and gateways
+    what: "Tools for building MCP servers and for putting a governed gateway in front of many of them."
+    options:
+      - name: agentgateway
+        kind: open-source
+        url: https://agentgateway.dev
+        good_for: "Routing, policy and observability between agents and their tools, for MCP and A2A traffic. A project of the Agentic AI Foundation."
+        watch_for: "A new piece of infrastructure to run; useful once there are many servers to govern."
+        verified: 2026-10
+        source: https://aaif.io/blog/a2a-joins-aaif
+      - name: FastMCP
+        kind: open-source
+        url: https://gofastmcp.com
+        good_for: "Building MCP servers and clients in Python with decorators, including generating servers from an existing OpenAPI specification."
+        watch_for: "Generating tools straight from an API gives the model every endpoint. Curate which ones it should see."
+        verified: 2026-10
+        source: https://www.kdnuggets.com/fastmcp-the-pythonic-way-to-build-mcp-servers-and-clients
+      - name: MCP SDKs
+        kind: open-source
+        url: https://modelcontextprotocol.io/docs/sdk
+        good_for: "The official SDKs (Python, TypeScript, Go, Java and others) that track the specification most closely."
+        watch_for: "Lower level than frameworks built on top of them."
+        verified: 2026-10
+        source: https://modelcontextprotocol.io/docs/learn/versioning
+    clouds:
+      aws: [Amazon Bedrock AgentCore Gateway]
+      azure: [Azure API Management MCP servers, Azure Functions MCP endpoints]
+      gcp: [Agent Gateway]
+    cloud_notes: "Azure API Management can expose an existing REST API as an MCP server, which keeps the API's existing authentication and rate limits in front of the model."
+    tradeoffs:
+      - "Wrapping an existing, well-secured API as an MCP server is usually safer than building new tool endpoints, because permission checks already live in the API."
+      - "A gateway in front of many MCP servers centralizes authentication, logging and policy. With one or two servers, it is extra infrastructure."

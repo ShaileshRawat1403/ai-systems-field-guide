@@ -1,0 +1,70 @@
+layer: memory-and-state
+summary: "What an AI system keeps between turns and between sessions: the running state of a task, the conversation so far, and longer-lived facts about users. Memory makes assistants useful and is also where privacy problems accumulate."
+
+categories:
+  - id: agent-memory
+    name: Long-term agent memory
+    what: "Services and libraries that extract facts from conversations, store them and bring the relevant ones back in later sessions."
+    options:
+      - name: LangMem
+        kind: open-source
+        url: https://langchain-ai.github.io/langmem/
+        good_for: "Episodic, semantic and procedural memory built on LangGraph's storage, under MIT."
+        watch_for: "Tightly coupled to LangGraph, with no managed hosting; your team runs the storage."
+        verified: 2026-10
+        source: https://atlan.com/know/best-ai-agent-memory-frameworks-2026/
+      - name: Letta
+        kind: open-source
+        url: https://www.letta.com
+        good_for: "Agents that manage their own memory tiers through explicit function calls, from the MemGPT research."
+        watch_for: "It is a full agent runtime rather than a drop-in component, and it retired several server-side features in March 2026."
+        verified: 2026-10
+        source: https://atlan.com/know/best-ai-agent-memory-frameworks-2026/
+      - name: Mem0
+        kind: open-source
+        url: https://mem0.ai
+        good_for: "Adding user, session and agent memory to an existing app, with an open-source SDK and a managed platform."
+        watch_for: "Graph memory is in the managed platform only, and it does not model when facts stopped being true."
+        verified: 2026-10
+        source: https://atlan.com/know/best-ai-agent-memory-frameworks-2026/
+      - name: Zep
+        kind: commercial
+        url: https://www.getzep.com
+        good_for: "A temporal knowledge graph where facts have validity windows, so outdated facts are retired but kept as history. Its Graphiti library is open source."
+        watch_for: "The managed service runs a different engine from open-source Graphiti."
+        verified: 2026-10
+        source: https://atlan.com/know/best-ai-agent-memory-frameworks-2026/
+    clouds:
+      aws: [Amazon Bedrock AgentCore Memory]
+      azure: [Foundry Agent Service memory]
+      gcp: [Memory Bank on Gemini Enterprise Agent Platform]
+    cloud_notes: "Each cloud's agent platform now includes managed short-term and long-term memory, usually the simplest choice when the agent already runs there."
+    tradeoffs:
+      - "Long-term memory is personal data. Before adding it, decide what may be stored, how a user sees and deletes it, and how long it lasts."
+      - "Facts change. A memory that can't tell 'was true' from 'is true' will confidently repeat an old address or an old manager's name."
+
+  - id: run-state
+    name: Run state and checkpoints
+    what: "Where a running task keeps its progress, so it can pause for approval, survive a crash and resume."
+    options:
+      - name: PostgreSQL
+        kind: open-source
+        url: https://www.postgresql.org
+        good_for: "Durable checkpoints next to business data; most agent frameworks ship a Postgres checkpointer."
+        watch_for: "Checkpoints grow quickly with long conversations; plan retention."
+        verified: 2026-10
+        source: https://www.postgresql.org/docs/
+      - name: Redis
+        kind: open-source
+        url: https://redis.io
+        good_for: "Fast session state and short-term memory with expiry."
+        watch_for: "Configure persistence explicitly if losing state on restart is not acceptable. Licensing changed in 2024 and again in 2025, so check the version."
+        verified: 2026-10
+        source: https://redis.io/docs/latest/
+    clouds:
+      aws: [Amazon Aurora PostgreSQL, Amazon ElastiCache]
+      azure: [Azure Database for PostgreSQL, Azure Managed Redis]
+      gcp: [Cloud SQL for PostgreSQL, Memorystore]
+    cloud_notes: "Managed agent runtimes keep run state for you, but exporting it later, for audit or migration, is not always easy. Ask how before relying on it."
+    tradeoffs:
+      - "Short-term state belongs to the task and should expire with it. Mixing it with long-term memory is how one user's details end up in another session."

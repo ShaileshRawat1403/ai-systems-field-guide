@@ -1,0 +1,1274 @@
+<title>AI Stack Map</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Schibsted+Grotesk:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Layout: a field catalog. Layers run down the page; inside each, categories hold option cards, then the cloud equivalents and the trade-offs. */
+:root {
+  --bg: #ECEFEA;
+  --surface: #F8F9F6;
+  --ink: #17201D;
+  --ink-2: #36423D;
+  --muted: #5E6A64;
+  --line: #CDD3CD;
+  --ai: #B8730F;
+  --ai-ink: #8C5306;
+  --ai-fill: #F5E6CC;
+  --trace: #2350C8;
+  --warn: #A63A2A;
+  --ok: #2E7A4C;
+  --display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --body: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111715; --surface: #19211E; --ink: #E5EAE6; --ink-2: #C3CCC7; --muted: #97A39D; --line: #2F3A36;
+    --ai: #D9963E; --ai-ink: #EDB765; --ai-fill: #33260F; --trace: #86A2FF; --warn: #EE8573; --ok: #6CCB92; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111715; --surface: #19211E; --ink: #E5EAE6; --ink-2: #C3CCC7; --muted: #97A39D; --line: #2F3A36;
+  --ai: #D9963E; --ai-ink: #EDB765; --ai-fill: #33260F; --trace: #86A2FF; --warn: #EE8573; --ok: #6CCB92; color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.55; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 1040px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 22px 48px; }
+.eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0; }
+.back { font-family: var(--mono); font-size: 12px; color: var(--muted); text-decoration: none; display: inline-block; margin-bottom: 18px; }
+.back:hover { color: var(--ink); }
+h1 { font-family: var(--display); font-weight: 700; font-size: clamp(32px, 6vw, 50px); line-height: 1.02; letter-spacing: -.015em; margin: .25em 0 .3em; text-wrap: balance; }
+.lede { margin: 0; max-width: 62ch; color: var(--ink-2); font-size: 17px; }
+a { color: var(--trace); }
+button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--trace); outline-offset: 2px; }
+
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 12px; margin-top: 20px; border-bottom: 1px solid var(--line); display: grid; gap: 10px; }
+.bar-row { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+.search { flex: 1 1 220px; min-width: 0; font-family: var(--mono); font-size: 13px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 9px 12px; }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--surface); }
+.seg button { font-family: var(--mono); font-size: 12px; padding: 6px 11px; border: 0; border-radius: 999px; background: none; color: var(--muted); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.jump { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+.jump a { flex: none; font-family: var(--mono); font-size: 12px; text-decoration: none; color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; white-space: nowrap; }
+.count { font-family: var(--mono); font-size: 11.5px; color: var(--muted); margin: 0; font-variant-numeric: tabular-nums; }
+
+.layer { margin-top: 44px; scroll-margin-top: 140px; }
+.layer > h2 { font-family: var(--display); font-weight: 700; font-size: clamp(26px, 4vw, 34px); letter-spacing: -.01em; margin: .2em 0 .3em; }
+.summary { margin: 0; max-width: 64ch; color: var(--ink-2); font-size: 17px; }
+.cat { margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--line); display: grid; gap: 14px; }
+.cat h3 { font-family: var(--display); font-weight: 600; font-size: 21px; margin: 0; }
+.cat .what { margin: 0; max-width: 66ch; }
+.opts { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+@media (min-width: 680px) { .opts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 980px) { .opts { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.opt { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 15px 12px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.opt-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.opt-head a { font-family: var(--display); font-weight: 600; font-size: 16.5px; color: var(--ink); text-decoration: none; }
+.opt-head a:hover { text-decoration: underline; }
+.kind { flex: none; font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.kind.cloud-service { color: var(--ai-ink); }
+.kind.standard { color: var(--trace); }
+.opt p { margin: 0; font-size: 15px; }
+.opt .lbl { font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 1px; }
+.opt .lbl.warn { color: var(--warn); }
+.checked { font-family: var(--mono); font-size: 11px; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 8px; margin-top: 2px; }
+.checked a { color: var(--muted); }
+.clouds { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+@media (min-width: 680px) { .clouds { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.cloud { padding: 12px 14px; background: var(--surface); }
+.cloud + .cloud { border-top: 1px solid var(--line); }
+@media (min-width: 680px) { .cloud + .cloud { border-top: 0; border-left: 1px solid var(--line); } }
+.cloud .eyebrow { margin-bottom: 4px; }
+.cloud ul { margin: 0; padding-left: 1.05em; font-size: 15px; }
+.cloud li::marker { color: var(--ai); }
+.note { margin: 0; font-size: 15px; color: var(--ink-2); max-width: 70ch; }
+.trade { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.trade li { padding-left: 20px; position: relative; max-width: 70ch; }
+.trade li::before { content: "⇄"; position: absolute; left: 0; color: var(--muted); font-family: var(--mono); font-size: 13px; top: 2px; }
+.empty { margin-top: 30px; color: var(--muted); }
+.planned { margin-top: 56px; padding-top: 18px; border-top: 2px solid var(--ink); }
+.planned ul { margin: 10px 0 0; padding-left: 1.1em; columns: 2 220px; color: var(--ink-2); }
+footer { margin-top: 44px; font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+[hidden] { display: none !important; }
+</style>
+
+<div class="wrap">
+  <header>
+    <a class="back" href="index.html">← Explorer</a>
+    <p class="eyebrow">AI Systems Field Guide · Stack map</p>
+    <h1>The current stack, layer by layer</h1>
+    <p class="lede">Tools, open standards and cloud services for each layer, with what each is good for and what to watch for. Options are listed alphabetically, so order never reads as a ranking, and every entry shows when it was last checked.</p>
+  </header>
+
+  <div class="bar">
+    <div class="bar-row">
+      <label class="eyebrow" for="q" style="position:absolute;left:-9999px">Filter</label>
+      <input class="search" id="q" type="search" placeholder="Filter by name or need, e.g. pgvector, residency, MCP" autocomplete="off">
+      <div class="seg" id="kindSeg" role="group" aria-label="Kind">
+        <button data-kind="all" aria-pressed="true">All</button>
+        <button data-kind="open-source" aria-pressed="false">Open source</button>
+        <button data-kind="commercial" aria-pressed="false">Commercial</button>
+        <button data-kind="cloud-service" aria-pressed="false">Cloud service</button>
+        <button data-kind="standard" aria-pressed="false">Standard</button>
+      </div>
+    </div>
+    <div class="bar-row" style="justify-content:space-between">
+      <nav class="jump" id="jump" aria-label="Layers"></nav>
+      <p class="count" id="count"></p>
+    </div>
+  </div>
+
+  <main id="main"></main>
+  <footer>Product names belong to their owners. Listing is not endorsement. Found something out of date? Corrections with a source are welcome on GitHub.</footer>
+</div>
+
+<script type="application/json" id="content">
+{
+  "trunks": {
+    "1": "How software works",
+    "2": "How AI changes it",
+    "3": "How to build and operate it",
+    "4": "How to deploy it into an organization"
+  },
+  "layers": [
+    {
+      "id": "interface",
+      "name": "Interface",
+      "trunk": 1,
+      "status": "planned",
+      "stack": null
+    },
+    {
+      "id": "application-and-apis",
+      "name": "Application and APIs",
+      "trunk": 1,
+      "status": "planned",
+      "stack": null
+    },
+    {
+      "id": "data-and-contracts",
+      "name": "Data and contracts",
+      "trunk": 1,
+      "status": "planned",
+      "stack": null
+    },
+    {
+      "id": "identity",
+      "name": "Identity and access",
+      "trunk": 1,
+      "status": "planned",
+      "stack": null
+    },
+    {
+      "id": "operational-data",
+      "name": "Operational data",
+      "trunk": 1,
+      "status": "planned",
+      "stack": null
+    },
+    {
+      "id": "storage-and-caching",
+      "name": "Storage and caching",
+      "trunk": 1,
+      "status": "planned",
+      "stack": null
+    },
+    {
+      "id": "integration",
+      "name": "Integration",
+      "trunk": 1,
+      "status": "planned",
+      "stack": null
+    },
+    {
+      "id": "infrastructure-and-hosting",
+      "name": "Infrastructure and hosting",
+      "trunk": 1,
+      "status": "planned",
+      "stack": null
+    },
+    {
+      "id": "models-and-serving",
+      "name": "Models and serving",
+      "trunk": 2,
+      "status": "in progress",
+      "stack": {
+        "summary": "Where the model comes from and where it runs. Most teams start with a hosted API, move some work to open-weight models for cost, control or data residency, and need a serving engine only when they host those models themselves.",
+        "categories": [
+          {
+            "id": "model-apis",
+            "name": "Hosted model APIs",
+            "what": "Frontier models you call over HTTPS and pay for by the token. No GPUs to run, but your data leaves your network unless you reach the model through your cloud provider.",
+            "options": [
+              {
+                "name": "Anthropic",
+                "kind": "commercial",
+                "url": "https://www.anthropic.com/api",
+                "good_for": "Claude models, long-context work, tool use and agentic coding. Also offered through all three major clouds.",
+                "watch_for": "Model availability differs by region when reached through a cloud provider.",
+                "verified": "2026-10",
+                "source": "https://platform.claude.com/docs"
+              },
+              {
+                "name": "Cohere",
+                "kind": "commercial",
+                "url": "https://cohere.com",
+                "good_for": "Enterprise retrieval stacks that want generation, embeddings and reranking from one vendor, with private deployment options.",
+                "watch_for": "Smaller model range than the largest providers, so check fit for complex reasoning tasks.",
+                "verified": "2026-10",
+                "source": "https://docs.cohere.com"
+              },
+              {
+                "name": "Google Gemini API",
+                "kind": "commercial",
+                "url": "https://ai.google.dev",
+                "good_for": "Gemini models, very long context and native multimodal input such as video and audio.",
+                "watch_for": "The developer API and the Google Cloud route have different terms, quotas and data handling. Pick the one your client's contract covers.",
+                "verified": "2026-10",
+                "source": "https://ai.google.dev/gemini-api/docs"
+              },
+              {
+                "name": "Mistral AI",
+                "kind": "commercial",
+                "url": "https://mistral.ai",
+                "good_for": "European provider with both hosted and open-weight models, useful where EU data residency matters.",
+                "watch_for": "Feature parity between its hosted and open-weight models varies by release.",
+                "verified": "2026-10",
+                "source": "https://docs.mistral.ai"
+              },
+              {
+                "name": "OpenAI",
+                "kind": "commercial",
+                "url": "https://platform.openai.com",
+                "good_for": "GPT models, a broad tool ecosystem, and Azure-hosted access for Microsoft-centric clients.",
+                "watch_for": "Direct API and Microsoft Foundry access differ in features, release timing and quotas.",
+                "verified": "2026-10",
+                "source": "https://platform.openai.com/docs"
+              }
+            ],
+            "clouds": {
+              "aws": [
+                "Amazon Bedrock"
+              ],
+              "azure": [
+                "Microsoft Foundry"
+              ],
+              "gcp": [
+                "Gemini Enterprise Agent Platform"
+              ]
+            },
+            "cloud_notes": "Azure AI Foundry became Microsoft Foundry in November 2025, and Google renamed Vertex AI to Gemini Enterprise Agent Platform in April 2026, so older documentation uses the previous names. The catalogs overlap but are not identical, and a model offered on a cloud may be limited to certain regions. For data residency, check the region before the model.",
+            "tradeoffs": [
+              "Calling a provider directly gets new models first. Calling it through the client's cloud usually wins on procurement, network isolation and existing data agreements, at the cost of a lag on new releases.",
+              "Model choice is easier to change than it looks if the orchestrator hides the provider behind one interface. It is expensive to change once prompts and evaluations are tuned to a single model's quirks."
+            ]
+          },
+          {
+            "id": "open-weight-models",
+            "name": "Open-weight model families",
+            "what": "Models whose weights you can download and run yourself, on your own hardware or a cloud you control.",
+            "options": [
+              {
+                "name": "DeepSeek",
+                "kind": "open-source",
+                "url": "https://www.deepseek.com",
+                "good_for": "Large mixture-of-experts models with strong reasoning, under a permissive MIT license for recent weights.",
+                "watch_for": "The full-size models need multi-GPU servers. Some clients have policies on models from particular jurisdictions, so ask early.",
+                "verified": "2026-10",
+                "source": "https://hidekazu-konishi.com/entry/open_weights_llm_release_history_and_timeline.html"
+              },
+              {
+                "name": "Gemma",
+                "kind": "open-source",
+                "url": "https://ai.google.dev/gemma",
+                "good_for": "Google's small and mid-sized models that run on a single GPU or a laptop. Gemma 4 moved to the Apache 2.0 license.",
+                "watch_for": "Earlier Gemma versions used custom terms, so check which version a project depends on.",
+                "verified": "2026-10",
+                "source": "https://hidekazu-konishi.com/entry/open_weights_llm_release_history_and_timeline.html"
+              },
+              {
+                "name": "gpt-oss",
+                "kind": "open-source",
+                "url": "https://openai.com/index/introducing-gpt-oss/",
+                "good_for": "OpenAI's open-weight reasoning models under Apache 2.0, plus a safety classifier variant.",
+                "watch_for": "A narrower family than some others, with fewer size options.",
+                "verified": "2026-10",
+                "source": "https://hidekazu-konishi.com/entry/open_weights_llm_release_history_and_timeline.html"
+              },
+              {
+                "name": "Llama",
+                "kind": "open-source",
+                "url": "https://www.llama.com",
+                "good_for": "Wide ecosystem support in tools and serving engines.",
+                "watch_for": "Released under Meta's own community license rather than a standard open-source license. The most recent open-weight release found was Llama 4 in April 2025.",
+                "verified": "2026-10",
+                "source": "https://hidekazu-konishi.com/entry/open_weights_llm_release_history_and_timeline.html"
+              },
+              {
+                "name": "Mistral open models",
+                "kind": "open-source",
+                "url": "https://mistral.ai/models",
+                "good_for": "A range of Apache 2.0 models from small to large, including coding and reasoning variants.",
+                "watch_for": "Licenses differ between releases; at least one 2026 model uses a modified MIT license.",
+                "verified": "2026-10",
+                "source": "https://hidekazu-konishi.com/entry/open_weights_llm_release_history_and_timeline.html"
+              },
+              {
+                "name": "Phi",
+                "kind": "open-source",
+                "url": "https://azure.microsoft.com/products/phi",
+                "good_for": "Microsoft's small models under MIT, for on-device and low-cost tasks.",
+                "watch_for": "Small models trade breadth of knowledge for speed, so test them on the actual task.",
+                "verified": "2026-10",
+                "source": "https://hidekazu-konishi.com/entry/open_weights_llm_release_history_and_timeline.html"
+              },
+              {
+                "name": "Qwen",
+                "kind": "open-source",
+                "url": "https://qwen.ai",
+                "good_for": "Alibaba's family with many sizes, strong multilingual and coding variants, under Apache 2.0.",
+                "watch_for": "Frequent releases mean the 'current' version changes every few months. Pin the exact model in configuration.",
+                "verified": "2026-10",
+                "source": "https://hidekazu-konishi.com/entry/open_weights_llm_release_history_and_timeline.html"
+              }
+            ],
+            "clouds": {
+              "aws": [
+                "Amazon Bedrock",
+                "Amazon SageMaker AI"
+              ],
+              "azure": [
+                "Microsoft Foundry model catalog"
+              ],
+              "gcp": [
+                "Model Garden"
+              ]
+            },
+            "cloud_notes": "Each cloud hosts a selection of open-weight models as managed endpoints, so you can use them without running GPUs. The selection differs, and a model you plan to self-host may not be in a given catalog.",
+            "tradeoffs": [
+              "Self-hosting an open-weight model starts to pay off at steady, high volume or when data cannot leave the client's network. At low or spiky volume, the GPU bill usually exceeds the API bill.",
+              "A license that allows commercial use is the first check, not the last. Some licenses add conditions on user counts or acceptable use."
+            ]
+          },
+          {
+            "id": "inference-servers",
+            "name": "Self-hosted inference servers",
+            "what": "Engines that load model weights onto your hardware and serve them over an API, usually one compatible with OpenAI's.",
+            "options": [
+              {
+                "name": "llama.cpp",
+                "kind": "open-source",
+                "url": "https://github.com/ggml-org/llama.cpp",
+                "good_for": "Running quantized models on CPUs, laptops and edge devices with very few dependencies.",
+                "watch_for": "Built for single-user or light use, not high-concurrency serving.",
+                "verified": "2026-10",
+                "source": "https://github.com/ggml-org/llama.cpp"
+              },
+              {
+                "name": "Ollama",
+                "kind": "open-source",
+                "url": "https://ollama.com",
+                "good_for": "Running models on a developer machine with one command. Exposes OpenAI and Anthropic compatible APIs, and offers optional cloud-hosted models.",
+                "watch_for": "No continuous batching, so throughput falls sharply under concurrent load. Treat it as a local and prototyping tool, and note that ':cloud' models run on Ollama's servers.",
+                "verified": "2026-10",
+                "source": "https://angelo-lima.fr/en/ollama-2026-state-of-the-art-en/"
+              },
+              {
+                "name": "SGLang",
+                "kind": "open-source",
+                "url": "https://www.sglang.io",
+                "good_for": "High-throughput production serving with prefix caching, from one GPU to large clusters, across NVIDIA, AMD, TPU and other hardware.",
+                "watch_for": "Operating it well takes GPU and infrastructure skills the client may not have.",
+                "verified": "2026-10",
+                "source": "https://docs.sglang.io/"
+              },
+              {
+                "name": "Text Generation Inference",
+                "kind": "open-source",
+                "url": "https://huggingface.co/docs/text-generation-inference",
+                "good_for": "Existing deployments built on Hugging Face's server.",
+                "watch_for": "In maintenance mode since December 2025, taking only minor fixes. Hugging Face points new work to vLLM, SGLang or llama.cpp.",
+                "verified": "2026-10",
+                "source": "https://aiwiki.ai/wiki/huggingface_tgi"
+              },
+              {
+                "name": "vLLM",
+                "kind": "open-source",
+                "url": "https://vllm.ai",
+                "good_for": "High-throughput production serving with paged attention and continuous batching, and broad model support.",
+                "watch_for": "Fast release cadence; pin versions and re-test after upgrades.",
+                "verified": "2026-10",
+                "source": "https://docs.vllm.ai"
+              }
+            ],
+            "clouds": {
+              "aws": [
+                "Amazon SageMaker AI",
+                "Amazon EKS"
+              ],
+              "azure": [
+                "Azure Machine Learning online endpoints",
+                "Azure Kubernetes Service"
+              ],
+              "gcp": [
+                "Model Garden self-deploy",
+                "Google Kubernetes Engine"
+              ]
+            },
+            "cloud_notes": "The managed options run these same engines behind the scenes. Kubernetes gives the most control and the most operational work.",
+            "tradeoffs": [
+              "A local runner and a production server solve different problems. The jump from one user to fifty concurrent users is where the choice of engine starts to matter.",
+              "GPU capacity, not software, is often the real constraint. Confirm the client can actually get the GPUs before designing around self-hosting."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "orchestration-and-agents",
+      "name": "Orchestration and agent frameworks",
+      "trunk": 2,
+      "status": "in progress",
+      "stack": {
+        "summary": "The code that runs an AI request: building context, calling the model, routing tool calls, checking results and deciding what happens next. Frameworks package this work; durable workflow engines keep it alive when it runs for minutes, hours or days.",
+        "categories": [
+          {
+            "id": "agent-frameworks",
+            "name": "Agent frameworks",
+            "what": "Libraries for building agents and multi-step AI workflows: the loop, tool calling, state, handoffs between agents and human approval points.",
+            "options": [
+              {
+                "name": "Agent Development Kit (Google)",
+                "kind": "open-source",
+                "url": "https://google.github.io/adk-docs/",
+                "good_for": "Code-first agents in Python, Go, TypeScript, Java or Kotlin, with MCP and A2A support across all five.",
+                "watch_for": "Tuned for Gemini and Google's platform. Python supports other model providers through adapters; check the language you plan to use.",
+                "verified": "2026-10",
+                "source": "https://cloud.google.com/blog/topics/developers-practitioners/one-agent-development-kit-five-languages"
+              },
+              {
+                "name": "Claude Agent SDK",
+                "kind": "commercial",
+                "url": "https://code.claude.com/docs/en/agent-sdk/overview",
+                "good_for": "Embedding the agent loop that powers Claude Code, with built-in tools, permissions, hooks, subagents, sessions and MCP, in Python or TypeScript.",
+                "watch_for": "Runs Claude models only, and is governed by Anthropic's commercial terms.",
+                "verified": "2026-10",
+                "source": "https://code.claude.com/docs/en/agent-sdk/overview"
+              },
+              {
+                "name": "CrewAI",
+                "kind": "open-source",
+                "url": "https://www.crewai.com",
+                "good_for": "Role-based teams of agents ('crews') plus event-driven 'flows' for more deterministic control.",
+                "watch_for": "Role-play style multi-agent setups can hide which agent made a decision. Keep tracing on.",
+                "verified": "2026-10",
+                "source": "https://docs.crewai.com"
+              },
+              {
+                "name": "LangGraph",
+                "kind": "open-source",
+                "url": "https://www.langchain.com/langgraph",
+                "good_for": "Explicit graphs of steps with checkpointed state, durable execution and human-in-the-loop pauses. Stable 1.0 since October 2025.",
+                "watch_for": "More code and concepts than a simple loop needs. Its managed platform is a separate commercial product.",
+                "verified": "2026-10",
+                "source": "https://www.langchain.com/blog/langgraph-v1"
+              },
+              {
+                "name": "LlamaIndex",
+                "kind": "open-source",
+                "url": "https://www.llamaindex.ai",
+                "good_for": "Document-heavy agents, with workflows tightly integrated with its retrieval and parsing tools.",
+                "watch_for": "The open-source library and the commercial LlamaCloud services are easy to confuse in planning and pricing.",
+                "verified": "2026-10",
+                "source": "https://www.llamaindex.ai/enterprise"
+              },
+              {
+                "name": "Microsoft Agent Framework",
+                "kind": "open-source",
+                "url": "https://learn.microsoft.com/agent-framework/",
+                "good_for": "Agents and multi-agent workflows in .NET and Python. Version 1.0 shipped in April 2026 as the successor to Semantic Kernel and AutoGen.",
+                "watch_for": "Projects on Semantic Kernel or AutoGen face a migration. Microsoft publishes guides for both.",
+                "verified": "2026-10",
+                "source": "https://devblogs.microsoft.com/agent-framework/microsoft-agent-framework-version-1-0/"
+              },
+              {
+                "name": "OpenAI Agents SDK",
+                "kind": "open-source",
+                "url": "https://openai.github.io/openai-agents-python/",
+                "good_for": "A small set of primitives: agents, handoffs, guardrails, sessions and built-in tracing.",
+                "watch_for": "Defaults and tracing are built around OpenAI's platform; other models need extra setup.",
+                "verified": "2026-10",
+                "source": "https://pypi.org/p/openai-agents"
+              },
+              {
+                "name": "Pydantic AI",
+                "kind": "open-source",
+                "url": "https://ai.pydantic.dev",
+                "good_for": "Type-safe Python agents with validated, structured outputs, from the team behind Pydantic.",
+                "watch_for": "Python only.",
+                "verified": "2026-10",
+                "source": "https://ai.pydantic.dev"
+              }
+            ],
+            "clouds": {
+              "aws": [
+                "Amazon Bedrock AgentCore"
+              ],
+              "azure": [
+                "Foundry Agent Service"
+              ],
+              "gcp": [
+                "Agent Runtime on Gemini Enterprise Agent Platform"
+              ]
+            },
+            "cloud_notes": "All three host agents built with outside frameworks. AgentCore describes itself as framework and model agnostic. Foundry's hosted agents list Microsoft Agent Framework, LangGraph, the OpenAI Agents SDK and Anthropic's Agent SDK. Google's runtime is built first for ADK. Each also bundles memory, identity, tool gateways and observability, which is where the real lock-in sits.",
+            "tradeoffs": [
+              "A graph framework makes control flow visible and testable; an autonomous loop is faster to build and harder to predict. Regulated workflows usually need the visible version.",
+              "A provider's own SDK is the shortest path to that provider's newest features, and ties the orchestration code to that provider.",
+              "Plain code around a model API is often enough for one model call plus a few tools. A framework starts to pay off with branching, long-running state or human approval steps."
+            ]
+          },
+          {
+            "id": "durable-workflows",
+            "name": "Durable workflow engines",
+            "what": "Engines that run long, multi-step processes reliably: each step is recorded, so a crash, retry or week-long wait for approval resumes where it stopped instead of starting over.",
+            "options": [
+              {
+                "name": "Inngest",
+                "kind": "commercial",
+                "url": "https://www.inngest.com",
+                "good_for": "Event-driven step functions for TypeScript and Python teams on serverless platforms.",
+                "watch_for": "Managed service by default; self-hosting is possible but less common.",
+                "verified": "2026-10",
+                "source": "https://www.inngest.com/docs"
+              },
+              {
+                "name": "Restate",
+                "kind": "open-source",
+                "url": "https://restate.dev",
+                "good_for": "Lightweight durable execution with a single binary, suited to services and agents that need exactly-once steps.",
+                "watch_for": "Younger ecosystem than older workflow engines.",
+                "verified": "2026-10",
+                "source": "https://docs.restate.dev"
+              },
+              {
+                "name": "Temporal",
+                "kind": "open-source",
+                "url": "https://temporal.io",
+                "good_for": "Mission-critical workflows at large scale, with SDKs in many languages and a managed cloud option.",
+                "watch_for": "Its programming model (deterministic workflow code) takes time for a team to learn.",
+                "verified": "2026-10",
+                "source": "https://docs.temporal.io"
+              }
+            ],
+            "clouds": {
+              "aws": [
+                "AWS Step Functions"
+              ],
+              "azure": [
+                "Azure Durable Functions"
+              ],
+              "gcp": [
+                "Google Cloud Workflows"
+              ]
+            },
+            "cloud_notes": "The cloud services are the quickest start inside one cloud. Moving the same workflow to another cloud later means rewriting it.",
+            "tradeoffs": [
+              "Agent frameworks keep state for a run, but most were not built for processes that wait days for a person. When a workflow includes approvals or long waits, a durable engine underneath is worth its learning curve."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "context-and-retrieval",
+      "name": "Context and retrieval",
+      "trunk": 2,
+      "status": "in progress",
+      "stack": {
+        "summary": "Everything that decides what the model sees before it answers: turning documents into clean text, splitting and embedding them, searching for the right passages and putting the best ones first. Answer quality is capped by this layer.",
+        "categories": [
+          {
+            "id": "document-parsing",
+            "name": "Document parsing",
+            "what": "Turns PDFs, scans, slides and spreadsheets into clean, structured text that keeps tables, headings and reading order.",
+            "options": [
+              {
+                "name": "Docling",
+                "kind": "open-source",
+                "url": "https://www.docling.ai",
+                "good_for": "Self-hosted parsing with strong layout and table handling, started at IBM and now open source.",
+                "watch_for": "Runs its own models, so large batches need real compute.",
+                "verified": "2026-10",
+                "source": "https://www.redhat.com/en/topics/ai/docling"
+              },
+              {
+                "name": "LlamaParse",
+                "kind": "commercial",
+                "url": "https://www.llamaindex.ai/llamaparse",
+                "good_for": "Hosted parsing of complex documents with minimal setup, part of LlamaCloud.",
+                "watch_for": "Documents are sent to a third-party service; check the client's data policy.",
+                "verified": "2026-10",
+                "source": "https://www.llamaindex.ai/enterprise"
+              },
+              {
+                "name": "Unstructured",
+                "kind": "open-source",
+                "url": "https://unstructured.io",
+                "good_for": "Many file types through one interface, with an open-source library and a managed platform.",
+                "watch_for": "Quality on hard layouts depends on which strategy and tier you choose.",
+                "verified": "2026-10",
+                "source": "https://docs.unstructured.io"
+              }
+            ],
+            "clouds": {
+              "aws": [
+                "Amazon Textract"
+              ],
+              "azure": [
+                "Azure Document Intelligence"
+              ],
+              "gcp": [
+                "Google Document AI"
+              ]
+            },
+            "cloud_notes": "The cloud services keep documents inside the client's cloud tenancy, which often settles the decision in regulated work.",
+            "tradeoffs": [
+              "Parsing is where most retrieval failures start. A table flattened into a paragraph can't be retrieved correctly by any embedding model, so test parsing on the client's ugliest documents first."
+            ]
+          },
+          {
+            "id": "embedding-models",
+            "name": "Embedding models",
+            "what": "Models that turn text (and sometimes images) into vectors, so that passages with similar meaning land close together.",
+            "options": [
+              {
+                "name": "BGE",
+                "kind": "open-source",
+                "url": "https://huggingface.co/BAAI",
+                "good_for": "Self-hosted multilingual embeddings from BAAI, with matching rerankers.",
+                "watch_for": "You run and scale the model yourself.",
+                "verified": "2026-10",
+                "source": "https://huggingface.co/BAAI"
+              },
+              {
+                "name": "Cohere Embed",
+                "kind": "commercial",
+                "url": "https://cohere.com/embed",
+                "good_for": "Multilingual and multimodal embeddings, also available through Bedrock and Microsoft Foundry.",
+                "watch_for": "Vectors from one model version can't be mixed with another's; upgrades mean re-embedding.",
+                "verified": "2026-10",
+                "source": "https://docs.cohere.com"
+              },
+              {
+                "name": "Gemini Embedding",
+                "kind": "commercial",
+                "url": "https://ai.google.dev/gemini-api/docs/embeddings",
+                "good_for": "Google's embedding models through the Gemini API or Google Cloud.",
+                "watch_for": "Same re-embedding cost on model changes as any hosted embedding.",
+                "verified": "2026-10",
+                "source": "https://ai.google.dev/gemini-api/docs/embeddings"
+              },
+              {
+                "name": "OpenAI embeddings",
+                "kind": "commercial",
+                "url": "https://platform.openai.com/docs/guides/embeddings",
+                "good_for": "Widely supported embeddings with adjustable vector size, also through Microsoft Foundry.",
+                "watch_for": "Smaller vector sizes save storage but can lower retrieval quality; test both.",
+                "verified": "2026-10",
+                "source": "https://platform.openai.com/docs/guides/embeddings"
+              },
+              {
+                "name": "Qwen3 Embedding",
+                "kind": "open-source",
+                "url": "https://huggingface.co/Qwen",
+                "good_for": "Open-weight embeddings with strong multilingual results, under Apache 2.0.",
+                "watch_for": "Larger variants need a GPU to embed at speed.",
+                "verified": "2026-10",
+                "source": "https://huggingface.co/Qwen"
+              },
+              {
+                "name": "Voyage AI",
+                "kind": "commercial",
+                "url": "https://www.voyageai.com",
+                "good_for": "Domain-tuned embeddings (code, legal, finance) and rerankers. Part of MongoDB since 2025 and integrated with Atlas.",
+                "watch_for": "Product direction now follows MongoDB's platform.",
+                "verified": "2026-10",
+                "source": "https://www.constellationr.com/blog-news/insights/mongodb-picks-voyage-ai-aims-integrate-model-reranking"
+              }
+            ],
+            "clouds": {
+              "aws": [
+                "Embedding models in Amazon Bedrock"
+              ],
+              "azure": [
+                "Embedding models in Microsoft Foundry"
+              ],
+              "gcp": [
+                "Embedding models in Gemini Enterprise Agent Platform"
+              ]
+            },
+            "cloud_notes": "Each cloud offers its own embedding models plus some third-party ones. Keep the embedding model in the same region as the vector store.",
+            "tradeoffs": [
+              "Changing the embedding model means re-embedding every document. Choose with the corpus size in mind, and store which model produced each vector.",
+              "Public benchmark rankings rarely match a client's documents. Twenty real questions with known answers say more than a leaderboard."
+            ]
+          },
+          {
+            "id": "vector-search",
+            "name": "Vector search",
+            "what": "Stores embeddings and returns the nearest matches to a query, usually alongside keyword search and metadata filters.",
+            "options": [
+              {
+                "name": "Chroma",
+                "kind": "open-source",
+                "url": "https://www.trychroma.com",
+                "good_for": "Embedded use in prototypes and small apps, with a hosted cloud option.",
+                "watch_for": "Check its scaling and operations story before carrying a prototype into production.",
+                "verified": "2026-10",
+                "source": "https://docs.trychroma.com"
+              },
+              {
+                "name": "Elasticsearch",
+                "kind": "open-source",
+                "url": "https://www.elastic.co/elasticsearch",
+                "good_for": "Teams already running Elastic who want vector and keyword search in one engine. Now includes Jina's embedding and reranking models after Elastic's 2025 acquisition.",
+                "watch_for": "Licensing changed over the years; confirm which license and edition the client runs.",
+                "verified": "2026-10",
+                "source": "https://ir.elastic.co/News--Events/news/news-details/2025/Elastic-Completes-Acquisition-of-Jina-AI-a-Leader-in-Frontier-Models-for-Multimodal-and-Multilingual-Search/default.aspx"
+              },
+              {
+                "name": "Milvus",
+                "kind": "open-source",
+                "url": "https://milvus.io",
+                "good_for": "Very large collections with distributed deployment; managed through Zilliz Cloud.",
+                "watch_for": "The distributed setup has many moving parts to operate.",
+                "verified": "2026-10",
+                "source": "https://milvus.io/docs"
+              },
+              {
+                "name": "MongoDB Atlas Vector Search",
+                "kind": "commercial",
+                "url": "https://www.mongodb.com/products/platform/atlas-vector-search",
+                "good_for": "Clients already on MongoDB who want vectors next to their operational data.",
+                "watch_for": "Ties retrieval to the Atlas platform and its pricing.",
+                "verified": "2026-10",
+                "source": "https://www.mongodb.com/docs/atlas/atlas-vector-search/"
+              },
+              {
+                "name": "OpenSearch",
+                "kind": "open-source",
+                "url": "https://opensearch.org",
+                "good_for": "Open-source search with vector, keyword and hybrid queries, hosted under the Linux Foundation.",
+                "watch_for": "Tuning for both vector and keyword workloads takes search expertise.",
+                "verified": "2026-10",
+                "source": "https://opensearch.org/docs/latest/"
+              },
+              {
+                "name": "pgvector",
+                "kind": "open-source",
+                "url": "https://github.com/pgvector/pgvector",
+                "good_for": "Vector search inside an existing Postgres, so vectors, permissions and business data share one database and one backup.",
+                "watch_for": "Very large collections or heavy filtered search need careful indexing and tuning.",
+                "verified": "2026-10",
+                "source": "https://github.com/pgvector/pgvector"
+              },
+              {
+                "name": "Pinecone",
+                "kind": "commercial",
+                "url": "https://www.pinecone.io",
+                "good_for": "A fully managed, serverless vector database with nothing to operate.",
+                "watch_for": "Data lives in a separate vendor service, which some clients' policies rule out.",
+                "verified": "2026-10",
+                "source": "https://docs.pinecone.io"
+              },
+              {
+                "name": "Qdrant",
+                "kind": "open-source",
+                "url": "https://qdrant.tech",
+                "good_for": "Fast filtered search with rich payloads, self-hosted or managed.",
+                "watch_for": "Another database for the client to run, back up and secure.",
+                "verified": "2026-10",
+                "source": "https://qdrant.tech/documentation/"
+              },
+              {
+                "name": "Weaviate",
+                "kind": "open-source",
+                "url": "https://weaviate.io",
+                "good_for": "Built-in hybrid search and modules for embedding at ingest, self-hosted or managed.",
+                "watch_for": "Built-in modules are convenient but couple ingestion to the database.",
+                "verified": "2026-10",
+                "source": "https://weaviate.io/developers/weaviate"
+              }
+            ],
+            "clouds": {
+              "aws": [
+                "Amazon S3 Vectors",
+                "Amazon OpenSearch Service",
+                "Amazon Aurora PostgreSQL with pgvector"
+              ],
+              "azure": [
+                "Azure AI Search",
+                "Azure Cosmos DB vector search",
+                "Azure Database for PostgreSQL with pgvector"
+              ],
+              "gcp": [
+                "Agent Platform Vector Search",
+                "AlloyDB for PostgreSQL",
+                "Cloud SQL for PostgreSQL with pgvector"
+              ]
+            },
+            "cloud_notes": "Amazon S3 Vectors became generally available in December 2025 as low-cost vector storage inside S3. Azure AI Search is also marketed as Foundry IQ; the service and its APIs are the same. Google's Agent Platform Vector Search is separate from its newer Agent Retrieval product.",
+            "tradeoffs": [
+              "A separate vector database starts to pay off at large scale, very high query volume or with demanding filters. Below that, vectors inside the database the client already runs are simpler to secure and operate.",
+              "Document permissions must travel with the vectors. If the store can't filter by who may see a chunk, retrieval will eventually leak something."
+            ]
+          },
+          {
+            "id": "reranking",
+            "name": "Rerankers",
+            "what": "Models that re-score a short list of retrieved passages against the question, so the most relevant ones reach the model first.",
+            "options": [
+              {
+                "name": "BGE Reranker",
+                "kind": "open-source",
+                "url": "https://huggingface.co/BAAI",
+                "good_for": "Self-hosted reranking paired with BGE embeddings.",
+                "watch_for": "Adds a model to host and its latency to every query.",
+                "verified": "2026-10",
+                "source": "https://huggingface.co/BAAI"
+              },
+              {
+                "name": "Cohere Rerank",
+                "kind": "commercial",
+                "url": "https://cohere.com/rerank",
+                "good_for": "Hosted multilingual reranking, also available through Bedrock and Microsoft Foundry.",
+                "watch_for": "Per-search pricing adds up at high query volume.",
+                "verified": "2026-10",
+                "source": "https://docs.cohere.com"
+              },
+              {
+                "name": "Jina Reranker",
+                "kind": "commercial",
+                "url": "https://jina.ai/reranker/",
+                "good_for": "Multilingual and multimodal reranking, now part of Elastic.",
+                "watch_for": "Roadmap now follows Elastic's platform.",
+                "verified": "2026-10",
+                "source": "https://www.businesswire.com/news/home/20251009619654/en/Elastic-Completes-Acquisition-of-Jina-AI-a-Leader-in-Frontier-Models-for-Multimodal-and-Multilingual-Search"
+              },
+              {
+                "name": "Voyage Rerank",
+                "kind": "commercial",
+                "url": "https://www.voyageai.com",
+                "good_for": "Reranking that pairs with Voyage embeddings and MongoDB Atlas.",
+                "watch_for": "Strongest fit inside the MongoDB ecosystem.",
+                "verified": "2026-10",
+                "source": "https://learn.mongodb.com/learn/course/voyage-ai-with-mongodb-on-demand-devrel-content/voyage-ai-with-mongodb/reranking-results-with-voyage-ai-rerankers?page=2"
+              }
+            ],
+            "clouds": {
+              "aws": [
+                "Rerank models in Amazon Bedrock"
+              ],
+              "azure": [
+                "Azure AI Search reranking"
+              ],
+              "gcp": [
+                "Ranking API"
+              ]
+            },
+            "cloud_notes": "Reranking is often a setting inside the cloud's search service rather than a separate model you call.",
+            "tradeoffs": [
+              "A reranker is usually the cheapest quality gain in a RAG system, because it works on a short list. Add it before switching embedding models."
+            ]
+          },
+          {
+            "id": "managed-retrieval",
+            "name": "Managed retrieval services",
+            "what": "Cloud services that bundle ingestion, chunking, embedding, search and citation into one managed pipeline.",
+            "options": [
+              {
+                "name": "Amazon Bedrock Knowledge Bases",
+                "kind": "cloud-service",
+                "url": "https://aws.amazon.com/bedrock/knowledge-bases/",
+                "good_for": "RAG over S3 and other sources with managed chunking and a choice of vector stores.",
+                "watch_for": "Defaults for chunking and parsing suit average documents; complex ones still need tuning.",
+                "verified": "2026-10",
+                "source": "https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html"
+              },
+              {
+                "name": "Azure AI Search knowledge bases",
+                "kind": "cloud-service",
+                "url": "https://azure.microsoft.com/products/search/",
+                "good_for": "Agentic retrieval with query planning, hybrid search and reranking, reusable across agents. Marketed as Foundry IQ.",
+                "watch_for": "Agentic retrieval makes several model calls per question, which raises cost and latency.",
+                "verified": "2026-10",
+                "source": "https://azure.microsoft.com/products/search/"
+              },
+              {
+                "name": "RAG Engine (Google)",
+                "kind": "cloud-service",
+                "url": "https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/rag-engine/use-vertexai-vector-search",
+                "good_for": "Managed corpora on Gemini Enterprise Agent Platform with a choice of vector databases.",
+                "watch_for": "Built around Gemini models and Google's platform.",
+                "verified": "2026-10",
+                "source": "https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/rag-engine/use-vertexai-vector-search"
+              }
+            ],
+            "clouds": {
+              "aws": [
+                "Amazon Bedrock Knowledge Bases"
+              ],
+              "azure": [
+                "Azure AI Search"
+              ],
+              "gcp": [
+                "RAG Engine",
+                "Agent Search"
+              ]
+            },
+            "cloud_notes": "These are the fastest route to a working pilot inside one cloud, and the hardest part of the stack to move later.",
+            "tradeoffs": [
+              "A managed pipeline gets a pilot live in days. The cost shows up later, when a retrieval problem needs a fix the service doesn't expose as a setting."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "tools-and-protocols",
+      "name": "Tools and protocols",
+      "trunk": 2,
+      "status": "in progress",
+      "stack": {
+        "summary": "How models reach the outside world. Tool calling lets a model ask for an action; protocols standardize how tools, other agents and user interfaces connect, so one integration can serve many clients.",
+        "categories": [
+          {
+            "id": "protocols",
+            "name": "Open protocols",
+            "what": "Shared standards for connecting agents to tools, to other agents and to the people using them.",
+            "options": [
+              {
+                "name": "A2A (Agent2Agent)",
+                "kind": "standard",
+                "url": "https://a2a-protocol.org",
+                "good_for": "Agents from different vendors or teams discovering each other and delegating tasks. Version 1.0 shipped in March 2026, and the project joined the Agentic AI Foundation in August 2026.",
+                "watch_for": "Most projects need tools before they need agent-to-agent delegation. Add it when there really are separate agents owned by separate teams.",
+                "verified": "2026-10",
+                "source": "https://aaif.io/blog/a2a-joins-aaif"
+              },
+              {
+                "name": "AG-UI",
+                "kind": "standard",
+                "url": "https://github.com/ag-ui-protocol/ag-ui",
+                "good_for": "Streaming an agent's progress, tool calls and state to a frontend, and sending user input back, started by CopilotKit.",
+                "watch_for": "Younger and less widely adopted than MCP; check support in the frameworks you plan to use.",
+                "verified": "2026-10",
+                "source": "https://docs.copilotkit.ai/ag-ui"
+              },
+              {
+                "name": "MCP (Model Context Protocol)",
+                "kind": "standard",
+                "url": "https://modelcontextprotocol.io",
+                "good_for": "Exposing tools, data and prompts once so any compatible AI client can use them. Hosted by the Agentic AI Foundation under the Linux Foundation.",
+                "watch_for": "The 2026-07-28 specification made the protocol stateless, replaced the initialize handshake with optional discovery, and moved features such as Tasks into extensions. Older servers and tutorials describe sessions that no longer exist.",
+                "verified": "2026-10",
+                "source": "https://aaif.io/blog/mcp-2026-changes-the-rules"
+              }
+            ],
+            "clouds": {
+              "aws": [
+                "Amazon Bedrock AgentCore Gateway"
+              ],
+              "azure": [
+                "Foundry Agent Service toolboxes",
+                "Azure API Management"
+              ],
+              "gcp": [
+                "Agent Gateway"
+              ]
+            },
+            "cloud_notes": "Each cloud now offers a gateway that turns existing APIs into agent tools and applies policy in one place. Foundry Agent Service supports A2A 1.0 as generally available.",
+            "tradeoffs": [
+              "A protocol is worth adopting when more than one client will use the same tools. For one assistant calling three internal APIs, plain tool definitions are simpler."
+            ]
+          },
+          {
+            "id": "mcp-servers-and-gateways",
+            "name": "MCP servers and gateways",
+            "what": "Tools for building MCP servers and for putting a governed gateway in front of many of them.",
+            "options": [
+              {
+                "name": "agentgateway",
+                "kind": "open-source",
+                "url": "https://agentgateway.dev",
+                "good_for": "Routing, policy and observability between agents and their tools, for MCP and A2A traffic. A project of the Agentic AI Foundation.",
+                "watch_for": "A new piece of infrastructure to run; useful once there are many servers to govern.",
+                "verified": "2026-10",
+                "source": "https://aaif.io/blog/a2a-joins-aaif"
+              },
+              {
+                "name": "FastMCP",
+                "kind": "open-source",
+                "url": "https://gofastmcp.com",
+                "good_for": "Building MCP servers and clients in Python with decorators, including generating servers from an existing OpenAPI specification.",
+                "watch_for": "Generating tools straight from an API gives the model every endpoint. Curate which ones it should see.",
+                "verified": "2026-10",
+                "source": "https://www.kdnuggets.com/fastmcp-the-pythonic-way-to-build-mcp-servers-and-clients"
+              },
+              {
+                "name": "MCP SDKs",
+                "kind": "open-source",
+                "url": "https://modelcontextprotocol.io/docs/sdk",
+                "good_for": "The official SDKs (Python, TypeScript, Go, Java and others) that track the specification most closely.",
+                "watch_for": "Lower level than frameworks built on top of them.",
+                "verified": "2026-10",
+                "source": "https://modelcontextprotocol.io/docs/learn/versioning"
+              }
+            ],
+            "clouds": {
+              "aws": [
+                "Amazon Bedrock AgentCore Gateway"
+              ],
+              "azure": [
+                "Azure API Management MCP servers",
+                "Azure Functions MCP endpoints"
+              ],
+              "gcp": [
+                "Agent Gateway"
+              ]
+            },
+            "cloud_notes": "Azure API Management can expose an existing REST API as an MCP server, which keeps the API's existing authentication and rate limits in front of the model.",
+            "tradeoffs": [
+              "Wrapping an existing, well-secured API as an MCP server is usually safer than building new tool endpoints, because permission checks already live in the API.",
+              "A gateway in front of many MCP servers centralizes authentication, logging and policy. With one or two servers, it is extra infrastructure."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "memory-and-state",
+      "name": "Memory and state",
+      "trunk": 2,
+      "status": "in progress",
+      "stack": {
+        "summary": "What an AI system keeps between turns and between sessions: the running state of a task, the conversation so far, and longer-lived facts about users. Memory makes assistants useful and is also where privacy problems accumulate.",
+        "categories": [
+          {
+            "id": "agent-memory",
+            "name": "Long-term agent memory",
+            "what": "Services and libraries that extract facts from conversations, store them and bring the relevant ones back in later sessions.",
+            "options": [
+              {
+                "name": "LangMem",
+                "kind": "open-source",
+                "url": "https://langchain-ai.github.io/langmem/",
+                "good_for": "Episodic, semantic and procedural memory built on LangGraph's storage, under MIT.",
+                "watch_for": "Tightly coupled to LangGraph, with no managed hosting; your team runs the storage.",
+                "verified": "2026-10",
+                "source": "https://atlan.com/know/best-ai-agent-memory-frameworks-2026/"
+              },
+              {
+                "name": "Letta",
+                "kind": "open-source",
+                "url": "https://www.letta.com",
+                "good_for": "Agents that manage their own memory tiers through explicit function calls, from the MemGPT research.",
+                "watch_for": "It is a full agent runtime rather than a drop-in component, and it retired several server-side features in March 2026.",
+                "verified": "2026-10",
+                "source": "https://atlan.com/know/best-ai-agent-memory-frameworks-2026/"
+              },
+              {
+                "name": "Mem0",
+                "kind": "open-source",
+                "url": "https://mem0.ai",
+                "good_for": "Adding user, session and agent memory to an existing app, with an open-source SDK and a managed platform.",
+                "watch_for": "Graph memory is in the managed platform only, and it does not model when facts stopped being true.",
+                "verified": "2026-10",
+                "source": "https://atlan.com/know/best-ai-agent-memory-frameworks-2026/"
+              },
+              {
+                "name": "Zep",
+                "kind": "commercial",
+                "url": "https://www.getzep.com",
+                "good_for": "A temporal knowledge graph where facts have validity windows, so outdated facts are retired but kept as history. Its Graphiti library is open source.",
+                "watch_for": "The managed service runs a different engine from open-source Graphiti.",
+                "verified": "2026-10",
+                "source": "https://atlan.com/know/best-ai-agent-memory-frameworks-2026/"
+              }
+            ],
+            "clouds": {
+              "aws": [
+                "Amazon Bedrock AgentCore Memory"
+              ],
+              "azure": [
+                "Foundry Agent Service memory"
+              ],
+              "gcp": [
+                "Memory Bank on Gemini Enterprise Agent Platform"
+              ]
+            },
+            "cloud_notes": "Each cloud's agent platform now includes managed short-term and long-term memory, usually the simplest choice when the agent already runs there.",
+            "tradeoffs": [
+              "Long-term memory is personal data. Before adding it, decide what may be stored, how a user sees and deletes it, and how long it lasts.",
+              "Facts change. A memory that can't tell 'was true' from 'is true' will confidently repeat an old address or an old manager's name."
+            ]
+          },
+          {
+            "id": "run-state",
+            "name": "Run state and checkpoints",
+            "what": "Where a running task keeps its progress, so it can pause for approval, survive a crash and resume.",
+            "options": [
+              {
+                "name": "PostgreSQL",
+                "kind": "open-source",
+                "url": "https://www.postgresql.org",
+                "good_for": "Durable checkpoints next to business data; most agent frameworks ship a Postgres checkpointer.",
+                "watch_for": "Checkpoints grow quickly with long conversations; plan retention.",
+                "verified": "2026-10",
+                "source": "https://www.postgresql.org/docs/"
+              },
+              {
+                "name": "Redis",
+                "kind": "open-source",
+                "url": "https://redis.io",
+                "good_for": "Fast session state and short-term memory with expiry.",
+                "watch_for": "Configure persistence explicitly if losing state on restart is not acceptable. Licensing changed in 2024 and again in 2025, so check the version.",
+                "verified": "2026-10",
+                "source": "https://redis.io/docs/latest/"
+              }
+            ],
+            "clouds": {
+              "aws": [
+                "Amazon Aurora PostgreSQL",
+                "Amazon ElastiCache"
+              ],
+              "azure": [
+                "Azure Database for PostgreSQL",
+                "Azure Managed Redis"
+              ],
+              "gcp": [
+                "Cloud SQL for PostgreSQL",
+                "Memorystore"
+              ]
+            },
+            "cloud_notes": "Managed agent runtimes keep run state for you, but exporting it later, for audit or migration, is not always easy. Ask how before relying on it.",
+            "tradeoffs": [
+              "Short-term state belongs to the task and should expire with it. Mixing it with long-term memory is how one user's details end up in another session."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "delivery",
+      "name": "Delivery",
+      "trunk": 3,
+      "status": "planned",
+      "stack": null
+    },
+    {
+      "id": "observability-and-tracing",
+      "name": "Observability and tracing",
+      "trunk": 3,
+      "status": "planned",
+      "stack": null
+    },
+    {
+      "id": "evaluation-and-guardrails",
+      "name": "Evaluation and guardrails",
+      "trunk": 3,
+      "status": "planned",
+      "stack": null
+    },
+    {
+      "id": "ai-gateway-and-cost",
+      "name": "AI gateway and cost control",
+      "trunk": 3,
+      "status": "planned",
+      "stack": null
+    },
+    {
+      "id": "security-and-governance",
+      "name": "Security and data governance",
+      "trunk": 4,
+      "status": "planned",
+      "stack": null
+    },
+    {
+      "id": "adoption-and-handover",
+      "name": "Adoption and handover",
+      "trunk": 4,
+      "status": "planned",
+      "stack": null
+    }
+  ]
+}
+</script>
+<script>
+(() => {
+  const D = JSON.parse(document.getElementById('content').textContent);
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const KIND = { 'open-source': 'Open source', commercial: 'Commercial', 'cloud-service': 'Cloud service', standard: 'Standard' };
+  const CLOUD = { aws: 'AWS', azure: 'Azure', gcp: 'Google Cloud' };
+  const state = { q: '', kind: 'all' };
+  const main = document.getElementById('main');
+  const published = D.layers.filter(l => l.stack);
+
+  document.getElementById('jump').innerHTML = published.map(l => `<a href="#${l.id}">${esc(l.name)}</a>`).join('');
+
+  function matches(o, c, l) {
+    if (state.kind !== 'all' && o.kind !== state.kind) return false;
+    if (!state.q) return true;
+    const hay = [o.name, o.good_for, o.watch_for, c.name, c.what, l.name].join(' ').toLowerCase();
+    return state.q.split(/\s+/).every(w => hay.includes(w));
+  }
+
+  function render() {
+    let shown = 0, h = '';
+    for (const l of published) {
+      let cats = '';
+      for (const c of l.stack.categories) {
+        const opts = (c.options || []).filter(o => matches(o, c, l));
+        if (!opts.length) continue;
+        shown += opts.length;
+        cats += `<section class="cat"><h3>${esc(c.name)}</h3><p class="what">${esc(c.what)}</p><div class="opts">`;
+        cats += opts.map(o => `<article class="opt">
+            <div class="opt-head"><a href="${esc(o.url)}" target="_blank" rel="noopener">${esc(o.name)}</a><span class="kind ${esc(o.kind)}">${esc(KIND[o.kind] || o.kind)}</span></div>
+            <p><span class="lbl">Good for</span>${esc(o.good_for)}</p>
+            <p><span class="lbl warn">Watch for</span>${esc(o.watch_for)}</p>
+            <p class="checked">Checked ${esc(o.verified)} · <a href="${esc(o.source)}" target="_blank" rel="noopener">source</a></p>
+          </article>`).join('');
+        cats += '</div>';
+        if (c.clouds) {
+          cats += '<div class="clouds">' + Object.keys(CLOUD).map(k => `<div class="cloud"><p class="eyebrow">${CLOUD[k]}</p>${(c.clouds[k] || []).length ? `<ul>${c.clouds[k].map(s => `<li>${esc(s)}</li>`).join('')}</ul>` : '<p class="note">No native service</p>'}</div>`).join('') + '</div>';
+        }
+        if (c.cloud_notes) cats += `<p class="note">${esc(c.cloud_notes)}</p>`;
+        if (c.tradeoffs && c.tradeoffs.length) cats += `<div><p class="eyebrow">Trade-offs</p><ul class="trade" style="margin-top:8px">${c.tradeoffs.map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>`;
+        cats += '</section>';
+      }
+      if (!cats) continue;
+      h += `<section class="layer" id="${esc(l.id)}"><p class="eyebrow">Trunk ${esc(l.trunk)} · ${esc(D.trunks[l.trunk])}</p><h2>${esc(l.name)}</h2><p class="summary">${esc(l.stack.summary)}</p>${cats}</section>`;
+    }
+    if (!shown) h = '<p class="empty">Nothing matches that filter. Try a broader word, or set the kind back to All.</p>';
+    const planned = D.layers.filter(l => !l.stack);
+    if (planned.length && !state.q && state.kind === 'all') {
+      h += `<section class="planned"><p class="eyebrow">Coming next</p><ul>${planned.map(l => `<li>${esc(l.name)}</li>`).join('')}</ul></section>`;
+    }
+    main.innerHTML = h;
+    const total = published.reduce((n, l) => n + l.stack.categories.reduce((m, c) => m + (c.options || []).length, 0), 0);
+    document.getElementById('count').textContent = shown === total ? `${total} entries across ${published.length} layers` : `${shown} of ${total} entries`;
+  }
+
+  document.getElementById('q').addEventListener('input', e => { state.q = e.target.value.trim().toLowerCase(); render(); });
+  document.getElementById('kindSeg').addEventListener('click', e => {
+    const b = e.target.closest('[data-kind]'); if (!b) return;
+    state.kind = b.dataset.kind;
+    document.querySelectorAll('#kindSeg button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    render();
+  });
+  render();
+  if (location.hash) { const t = document.getElementById(location.hash.slice(1)); if (t) t.scrollIntoView(); }
+})();
+</script>
